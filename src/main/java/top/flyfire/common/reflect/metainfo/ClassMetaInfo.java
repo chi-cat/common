@@ -23,6 +23,10 @@ public class ClassMetaInfo extends MetaInfo {
 
     private Map<String,FieldMetaInfo> fieldMetaInfoMap;
 
+    public Class<?> getRawType(){
+        return rawType;
+    }
+
     @Override
     protected String buildTypeName() {
         return rawType.getName();

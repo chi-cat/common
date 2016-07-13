@@ -1,13 +1,21 @@
 package top.flyfire.common.reflect.inst;
 
+import top.flyfire.common.reflect.MetaInfo;
+
 /**
  * Created by flyfire[dev.lluo@outlook.com] on 2016/5/22.
  * instance wrapper
  */
-public interface InstWrapper<T> {
+public abstract class InstWrapper<M extends MetaInfo> {
 
-    void set(T t);
+    protected M metaInfo;
 
-    T get();
+    public InstWrapper(M metaInfo){
+        this.metaInfo = metaInfo;
+    }
+
+    public abstract Object newInstance();
+
+    public abstract Object newContainerInstance(int size);
 
 }
