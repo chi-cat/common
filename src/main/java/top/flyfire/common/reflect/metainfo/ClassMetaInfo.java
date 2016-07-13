@@ -1,21 +1,19 @@
 package top.flyfire.common.reflect.metainfo;
 
 import top.flyfire.common.LoopUtils;
-import top.flyfire.common.reflect.GenericTypeAdapted;
-import top.flyfire.common.reflect.MetaInfo;
-import top.flyfire.common.reflect.ReflectUtils;
-import top.flyfire.common.reflect.ReflectiveSyntaxException;
+import top.flyfire.common.reflect.*;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
  * Created by flyfire[dev.lluo@outlook.com] on 2016/5/30.
  */
-public class ClassMetaInfo extends MetaInfo {
+public class ClassMetaInfo extends MetaInfo  {
 
     private Class<?> rawType;
 
@@ -90,5 +88,40 @@ public class ClassMetaInfo extends MetaInfo {
         }else{
             return false;
         }
+    }
+
+    public Object newInstance(){
+        try {
+            return this.rawType.newInstance();
+        }catch (ReflectiveOperationException e){
+            throw new ReflectiveException(e);
+        }
+    }
+
+    public boolean constainsField(String fieldName){
+        return null!=getField(fieldName);
+    }
+
+    public FieldMetaInfo getField(String fieldName){
+        return fieldMetaInfoMap.get(fieldName);
+    }
+
+    public Enumeration fieldEnum(){
+        return new Enumeration() {
+
+            private Iterator iterator = fieldMetaInfoMap.values().iterator();
+
+            public boolean hasMoreElements() {
+                if(iterator.hasNext()){
+                    return true;
+                }
+                iterator = null;
+                return false;
+            }
+
+            public Object nextElement() {
+                return iterator.next();
+            }
+        };
     }
 }

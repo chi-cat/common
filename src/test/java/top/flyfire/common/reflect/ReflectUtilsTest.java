@@ -1,6 +1,7 @@
 package top.flyfire.common.reflect;
 
 import org.junit.Test;
+import top.flyfire.common.reflect.metainfo.ClassMetaInfo;
 
 import java.util.Date;
 import java.util.List;
@@ -15,7 +16,13 @@ public class ReflectUtilsTest {
 
     @Test
     public void testUnWrap() throws Exception {
-        MetaInfo metaInfo = ReflectUtils.unWrap(TestSameB.class);
+//        MetaInfo metaInfo = ReflectUtils.unWrap(TestSameB.class);
+//        Object object = ((ClassMetaInfo)metaInfo).newInstance();
+//        ((ClassMetaInfo) metaInfo).getField("date").invokeSetter(object,new Date());
+//        System.out.println(metaInfo);
+        MetaInfo metaInfo = ReflectUtils.unWrap(TestSameName.class);
+        Object object = ((ClassMetaInfo)metaInfo).newInstance();
+        ((ClassMetaInfo) metaInfo).getField("name").invokeSetter(object,new Date());
         System.out.println(metaInfo);
     }
 
