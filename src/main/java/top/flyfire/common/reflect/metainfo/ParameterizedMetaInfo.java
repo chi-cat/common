@@ -1,15 +1,13 @@
 package top.flyfire.common.reflect.metainfo;
 
-import top.flyfire.common.reflect.GenericTypeAdapted;
-import top.flyfire.common.reflect.MetaInfo;
-import top.flyfire.common.reflect.ReflectUtils;
+import top.flyfire.common.reflect.*;
 
 import java.lang.reflect.Type;
 
 /**
  * Created by flyfire[dev.lluo@outlook.com] on 2016/5/31.
  */
-public class ParameterizedMetaInfo extends MetaInfo implements GenericTypeAdapted {
+public class ParameterizedMetaInfo extends MetaInfo implements GenericTypeAdapted ,Instanceable {
 
     private final MetaInfo[] actualTypeArguments;
 
@@ -78,5 +76,13 @@ public class ParameterizedMetaInfo extends MetaInfo implements GenericTypeAdapte
             }
         }
         return parameterizedMetaInfo;
+    }
+
+    public Object newInstance() {
+        if(rawType instanceof  Instanceable){
+            return ((Instanceable) rawType).newInstance();
+        }else{
+            throw new ReflectiveException(rawType+"is not implements Instanceable...");
+        }
     }
 }

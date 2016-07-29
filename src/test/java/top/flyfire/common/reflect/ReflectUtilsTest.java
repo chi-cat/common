@@ -20,7 +20,7 @@ public class ReflectUtilsTest {
 //        Object object = ((ClassMetaInfo)metaInfo).newInstance();
 //        ((ClassMetaInfo) metaInfo).getField("date").invokeSetter(object,new Date());
 //        System.out.println(metaInfo);
-        MetaInfo metaInfo = ReflectUtils.unWrap(TestSameName.class);
+        MetaInfo metaInfo = ReflectUtils.unWrap(TestSameB.class);
         Object object = ((ClassMetaInfo)metaInfo).newInstance();
         ((ClassMetaInfo) metaInfo).getField("name").invokeSetter(object,new Date());
         System.out.println(metaInfo);
@@ -52,6 +52,25 @@ public class ReflectUtilsTest {
 
     public static class TestSameB extends TestSameA<String,Date>{
 
+        private TestSameA<Map<String,String>,Integer> sb;
+
+        public TestSameA<Map<String, String>, Integer> getSb() {
+            return sb;
+        }
+
+        public void setSb(TestSameA<Map<String, String>, Integer> sb) {
+            this.sb = sb;
+        }
+
+        private List<List<Integer>> list;
+
+        public List<List<Integer>> getList() {
+            return list;
+        }
+
+        public void setList(List<List<Integer>> list) {
+            this.list = list;
+        }
     }
 
     public static class TestGA<A>{
