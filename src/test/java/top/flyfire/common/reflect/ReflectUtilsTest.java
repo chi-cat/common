@@ -20,13 +20,13 @@ public class ReflectUtilsTest {
 //        Object object = ((ClassMetaInfo)metaInfo).newInstance();
 //        ((ClassMetaInfo) metaInfo).getField("date").invokeSetter(object,new Date());
 //        System.out.println(metaInfo);
-        MetaInfo metaInfo = ReflectUtils.unWrap(TestSameB.class);
+        MetaInfo metaInfo = ReflectUtils.unWrap(TestSameName.class);
         Object object = ((ClassMetaInfo)metaInfo).newInstance();
         ((ClassMetaInfo) metaInfo).getField("name").invokeSetter(object,new Date());
         System.out.println(metaInfo);
     }
 
-    public static class TestSameName<A>{
+    public static class TestSameName<A extends CharSequence>{
         private A name;
 
         public A getName() {
@@ -36,9 +36,19 @@ public class ReflectUtilsTest {
         public void setName(A name) {
             this.name = name;
         }
+
+        private List<? extends Number>   age;
+
+        public List<? extends Number> getAge() {
+            return age;
+        }
+
+        public void setAge(List<? extends Number> age) {
+            this.age = age;
+        }
     }
 
-    public static class TestSameA<A,B> extends TestSameName<A>{
+    public static class TestSameA<A extends CharSequence,B> extends TestSameName<A>{
         private B date;
 
         public B getDate() {
@@ -52,13 +62,13 @@ public class ReflectUtilsTest {
 
     public static class TestSameB extends TestSameA<String,Date>{
 
-        private TestSameA<Map<String,String>,Integer> sb;
+        private TestSameA<StringBuffer,Integer> sb;
 
-        public TestSameA<Map<String, String>, Integer> getSb() {
+        public TestSameA<StringBuffer, Integer> getSb() {
             return sb;
         }
 
-        public void setSb(TestSameA<Map<String, String>, Integer> sb) {
+        public void setSb(TestSameA<StringBuffer, Integer> sb) {
             this.sb = sb;
         }
 

@@ -22,9 +22,9 @@ public class WildcardMetaInfo extends MetaInfo {
 
     @Override
     protected String buildTypeName() {
-        if(ObjectUtils.isNotNull(this.lowerBound)){
+        if(!MetaInfo.NULL.equals(this.lowerBound)){
             return StringUtils.merge("? super " ,this.lowerBound.getTypeName());
-        }else if(ObjectUtils.isNotNull(this.upperBound)){
+        }else if(MetaInfo.NULL.equals(this.upperBound)){
             return "?";
         }else{
             return StringUtils.merge("? extends " ,this.upperBound.getTypeName());
