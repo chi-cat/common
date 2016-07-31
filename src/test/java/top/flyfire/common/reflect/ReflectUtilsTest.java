@@ -4,6 +4,7 @@ import org.junit.Test;
 import top.flyfire.common.reflect.metainfo.ClassMetaInfo;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +21,9 @@ public class ReflectUtilsTest {
 //        Object object = ((ClassMetaInfo)metaInfo).newInstance();
 //        ((ClassMetaInfo) metaInfo).getField("date").invokeSetter(object,new Date());
 //        System.out.println(metaInfo);
-        MetaInfo metaInfo = ReflectUtils.unWrap(TestSameName.class);
-        Object object = ((ClassMetaInfo)metaInfo).newInstance();
-        ((ClassMetaInfo) metaInfo).getField("name").invokeSetter(object,new Date());
+        MetaInfo metaInfo = ReflectUtils.unWrap(HashMap.class);
+//        Object object = ((ClassMetaInfo)metaInfo).newInstance();
+//        ((ClassMetaInfo) metaInfo).getField("name").invokeSetter(object,new Date());
         System.out.println(metaInfo);
     }
 
@@ -45,6 +46,16 @@ public class ReflectUtilsTest {
 
         public void setAge(List<? extends Number> age) {
             this.age = age;
+        }
+
+        private List<? extends A> names;
+
+        public List<? extends A> getNames() {
+            return names;
+        }
+
+        public void setNames(List<? extends A> names) {
+            this.names = names;
         }
     }
 

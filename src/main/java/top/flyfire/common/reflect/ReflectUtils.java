@@ -14,12 +14,20 @@ import java.util.Map;
  * Created by flyfire[dev.lluo@outlook.com] on 2016/4/27.
  */
 public class ReflectUtils {
-    public final static boolean isJdkType(Class clzz){
+    public final static boolean isJdkDataType(Class clzz){
         return ObjectUtils.isNotNull(clzz)&&(clzz.isPrimitive()||Number.class.isAssignableFrom(clzz)||Date.class.isAssignableFrom(clzz)|| Boolean.class.isAssignableFrom(clzz)|| Collection.class.isAssignableFrom(clzz)|| Map.class.isAssignableFrom(clzz));
     }
 
     public final static boolean isInterface(Class clzz){
         return ObjectUtils.isNotNull(clzz)&&clzz.isInterface();
+    }
+
+    public final static Object newInstance(Class clzz){
+        try {
+            return clzz.newInstance();
+        }catch (ReflectiveOperationException e){
+            return new ReflectiveException(e);
+        }
     }
 
     private static final ThreadProxy<Class<?>,ClassMetaInfo> CLASS_META_INFO_THREAD_PROXY = new ThreadProxy<Class<?>,ClassMetaInfo>(){
