@@ -1,7 +1,5 @@
 package top.flyfire.common.reflect;
 
-import top.flyfire.common.reflect.metainfo.VariableMetaInfo;
-
 import java.lang.reflect.Type;
 
 /**

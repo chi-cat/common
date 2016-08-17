@@ -5,7 +5,12 @@ package top.flyfire.common.reflect;
  */
 public class ReflectiveException extends RuntimeException {
 
-    public ReflectiveException() {
+    /**
+	 * created [2016/4/26]
+	 */
+	private static final long serialVersionUID = -3616820862216161308L;
+
+	public ReflectiveException() {
     }
 
     public ReflectiveException(String message) {

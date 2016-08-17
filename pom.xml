@@ -7,6 +7,22 @@
     <groupId>top.flyfire</groupId>
     <artifactId>common</artifactId>
     <version>1.0-SNAPSHOT</version>
+    
+    <profiles>
+		<profile>
+			<id>jdk17</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<jdk>1.7</jdk>
+			</activation>
+			<properties>
+				  <maven.compiler.source>1.7</maven.compiler.source>
+				  <maven.compiler.target>1.7</maven.compiler.target>
+				  <maven.compiler.compilerVersion>1.7</maven.compiler.compilerVersion>
+				  </properties>
+			</profile>
+	</profiles>
+    
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
