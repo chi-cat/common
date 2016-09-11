@@ -1,6 +1,5 @@
 package top.flyfire.common;
 
-import java.util.IllegalFormatFlagsException;
 import java.util.regex.Pattern;
 
 /**

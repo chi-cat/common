@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 /**
  * Created by flyfire[dev.lluo@outlook.com] on 2016/5/31.
  */
-public class ParameterizedMetaInfo extends MetaInfo implements GenericTypeAdapted ,Instanceable {
+public class ParameterizedMetaInfo extends MetaInfo implements GenericTypeAdapted  {
 
     private final MetaInfo[] actualTypeArguments;
 
@@ -78,11 +78,4 @@ public class ParameterizedMetaInfo extends MetaInfo implements GenericTypeAdapte
         return parameterizedMetaInfo;
     }
 
-    public Object newInstance() {
-        if(rawType instanceof  Instanceable){
-            return ((Instanceable) rawType).newInstance();
-        }else{
-            throw new ReflectiveException(rawType+"is not implements Instanceable...");
-        }
-    }
 }
