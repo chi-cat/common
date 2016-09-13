@@ -1,0 +1,11 @@
+ClassMetaInfo
+    rawType:new
+    getField:filedMetaInfo(getType,invokeSetter)
+VariableMetaInfo
+    getBounds:classMetaInfo
+WildcardMetaInfo
+    lowerBound|upperBound
+ParameterizedMetaInfo
+    rawType:classMetaInfo(getField:actualTypeArguments@typeParameters)
+ArrayMetaInfo
+    index?
