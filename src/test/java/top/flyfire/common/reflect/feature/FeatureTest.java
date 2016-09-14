@@ -43,10 +43,15 @@ public class FeatureTest {
         MetaInfo metaInfo = ReflectUtils.unWrap(WType.class);
         Wrapper wrapper = WrapperFactory.wrap(metaInfo);
         Object instance = wrapper.instance();
+
         MetaInfo fieldMetaInfo = wrapper.getMetaInfo("wtype2");
         Wrapper fieldWrapper = WrapperFactory.wrap(fieldMetaInfo);
         MetaInfo subFieldMetaInfo = fieldWrapper.getMetaInfo("gen");
         Wrapper subFieldWrapper = WrapperFactory.wrap(subFieldMetaInfo);
+
+        MetaInfo fieldMetaInfo2 = wrapper.getMetaInfo("wtype");
+        Wrapper fieldWrapper2 = WrapperFactory.wrap(fieldMetaInfo2);
+
         metaInfo.toString();
     }
 
