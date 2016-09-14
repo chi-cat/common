@@ -65,7 +65,8 @@ public class ReflectUtils {
             return new ArrayMetaInfo(unWrap(((GenericArrayType) type).getGenericComponentType()));
         }else if(type instanceof TypeVariable){
             TypeVariable typeVariable = (TypeVariable) type;
-            return new VariableMetaInfo(typeVariable.getName(),unWrap(typeVariable.getBounds()),typeVariable.getGenericDeclaration());
+            Type[] bounds = typeVariable.getBounds();
+            return new VariableMetaInfo(typeVariable.getName(),ArrayUtils.isEmpty(bounds)?MetaInfo.NULL:unWrap(bounds[0]),typeVariable.getGenericDeclaration());
         }else if(type instanceof MetaInfo){
             return (MetaInfo) type;
         }else{

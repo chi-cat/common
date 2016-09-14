@@ -12,13 +12,13 @@ import java.lang.reflect.Type;
  */
 public class VariableMetaInfo extends MetaInfo implements GenericTypeAdapted {
 
-    private final MetaInfo[] bounds;
+    private final MetaInfo bound;
 
     private final GenericDeclaration genericDeclaration;
 
-    public VariableMetaInfo(String name,MetaInfo[] bounds, GenericDeclaration genericDeclaration) {
+    public VariableMetaInfo(String name,MetaInfo bound, GenericDeclaration genericDeclaration) {
         this.typeName = name;
-        this.bounds = bounds;
+        this.bound = bound;
         this.genericDeclaration = genericDeclaration;
     }
 
@@ -32,8 +32,8 @@ public class VariableMetaInfo extends MetaInfo implements GenericTypeAdapted {
         return false;
     }
 
-    public MetaInfo[] getBounds() {
-        return bounds;
+    public MetaInfo getBound() {
+        return bound;
     }
 
     public GenericDeclaration getGenericDeclaration() {
@@ -50,7 +50,7 @@ public class VariableMetaInfo extends MetaInfo implements GenericTypeAdapted {
             return true;
         }else if(obj instanceof VariableMetaInfo){
             VariableMetaInfo other = ((VariableMetaInfo) obj);
-            return typeName.equals(other.typeName)&&genericDeclaration.equals(other.genericDeclaration)&&ReflectUtils.metaInfoArrEquals(bounds,other.bounds);
+            return typeName.equals(other.typeName)&&genericDeclaration.equals(other.genericDeclaration)&&bound.equals(other.bound);
         }else{
             return false;
         }

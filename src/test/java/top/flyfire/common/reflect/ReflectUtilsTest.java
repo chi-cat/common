@@ -21,7 +21,7 @@ public class ReflectUtilsTest {
 //        Object object = ((ClassMetaInfo)metaInfo).newInstance();
 //        ((ClassMetaInfo) metaInfo).getField("date").invokeSetter(object,new Date());
 //        System.out.println(metaInfo);
-        MetaInfo metaInfo = ReflectUtils.unWrap(HashMap.class);
+        MetaInfo metaInfo = ReflectUtils.unWrap(new RawType<TestSameA<StringBuffer,Date>>(){}.getType());
 //        Object object = ((ClassMetaInfo)metaInfo).newInstance();
 //        ((ClassMetaInfo) metaInfo).getField("name").invokeSetter(object,new Date());
         System.out.println(metaInfo);

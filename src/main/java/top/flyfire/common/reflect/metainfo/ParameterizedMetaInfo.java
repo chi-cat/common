@@ -78,4 +78,14 @@ public class ParameterizedMetaInfo extends MetaInfo implements GenericTypeAdapte
         return parameterizedMetaInfo;
     }
 
+    public ClassMetaInfo asClassMetaInfo(){
+        MetaInfo metaInfo;
+        if (!((metaInfo = this.rawType) instanceof ClassMetaInfo)) {
+            throw new ReflectiveSyntaxException("[A ClassMetaInfo is expected in the buidlSuper , but superType is of type " + this.rawType + " .]");
+        }
+        ClassMetaInfo classMetaInfo = ((ClassMetaInfo)metaInfo).ssPrototype();
+        classMetaInfo.extendSuper(this);
+        return classMetaInfo;
+    }
+
 }

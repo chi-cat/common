@@ -4,6 +4,9 @@ import org.junit.Test;
 import top.flyfire.common.reflect.MetaInfo;
 import top.flyfire.common.reflect.RawType;
 import top.flyfire.common.reflect.ReflectUtils;
+import top.flyfire.common.reflect.metainfo.ClassMetaInfo;
+import top.flyfire.common.reflect.wrapper.Wrapper;
+import top.flyfire.common.reflect.wrapper.WrapperFactory;
 
 import java.math.BigDecimal;
 
@@ -13,6 +16,10 @@ import java.math.BigDecimal;
 public class FeatureTest {
 
     public void common(MetaInfo metaInfo){
+        ClassMetaInfo temp = null;
+        Wrapper wrapper = WrapperFactory.wrap(metaInfo);
+        Object instance = wrapper.instance();
+//        wrapper.set("gen",instance,new BigDecimal(123));
         metaInfo.toString();
     }
 
@@ -28,12 +35,19 @@ public class FeatureTest {
 
     @Test
     public void baseWidthGeanAsPdTest(){
-        common(ReflectUtils.unWrap(new RawType<BaseWithGen<BigDecimal>>(){}.getType()));
+        common(ReflectUtils.unWrap(new RawType<BaseWithGen<Base>>(){}.getType()));
     }
 
     @Test
     public void wtTest(){
-        common(ReflectUtils.unWrap(WType.class));
+        MetaInfo metaInfo = ReflectUtils.unWrap(WType.class);
+        Wrapper wrapper = WrapperFactory.wrap(metaInfo);
+        Object instance = wrapper.instance();
+        MetaInfo fieldMetaInfo = wrapper.getMetaInfo("wtype2");
+        Wrapper fieldWrapper = WrapperFactory.wrap(fieldMetaInfo);
+        MetaInfo subFieldMetaInfo = fieldWrapper.getMetaInfo("gen");
+        Wrapper subFieldWrapper = WrapperFactory.wrap(subFieldMetaInfo);
+        metaInfo.toString();
     }
 
 }

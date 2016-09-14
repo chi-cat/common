@@ -56,15 +56,11 @@ public class ClassMetaInfo extends MetaInfo  {
     }
 
     public void extendSuper(ParameterizedMetaInfo parameterizedMetaInfo) {
-        Type type;
-        while (!((type = parameterizedMetaInfo.getRawType()) instanceof ClassMetaInfo)) {
-            if (type instanceof ParameterizedMetaInfo) {
-                parameterizedMetaInfo = (ParameterizedMetaInfo) type;
-            } else {
-                throw new ReflectiveSyntaxException("[A ClassMetaInfo or TypeParameterized is expected in the buidlSuper , but superType is of type " + parameterizedMetaInfo + " .]");
-            }
+        MetaInfo metaInfo;
+        if (!((metaInfo = parameterizedMetaInfo.getRawType()) instanceof ClassMetaInfo)) {
+            throw new ReflectiveSyntaxException("[A ClassMetaInfo is expected in the buidlSuper , but superType is of type " + metaInfo + " .]");
         }
-        final ClassMetaInfo classMetaInfo = (ClassMetaInfo) type;
+        final ClassMetaInfo classMetaInfo = (ClassMetaInfo) metaInfo;
         final MetaInfo[] types = parameterizedMetaInfo.getActualTypeArguments();
 
         LoopUtils.forEach(classMetaInfo.fieldMetaInfoMap, new LoopUtils.EntryProxy<String, FieldMetaInfo>() {
@@ -123,5 +119,9 @@ public class ClassMetaInfo extends MetaInfo  {
                 return iterator.next();
             }
         };
+    }
+
+    public ClassMetaInfo ssPrototype(){
+        return new ClassMetaInfo(this.rawType,this.typeParameters);
     }
 }

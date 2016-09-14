@@ -13,4 +13,6 @@ public interface Wrapper<M> {
 
     void set(M s,Object instance, Object val);
 
+    Object rawValue(Object instance);
+
 }

@@ -16,4 +16,14 @@ public class WType {
     public void setWtype(List<? extends Base> wtype) {
         this.wtype = wtype;
     }
+
+    private BaseWithGen<? extends Base> wtype2;
+
+    public BaseWithGen<? extends Base> getWtype2() {
+        return wtype2;
+    }
+
+    public void setWtype2(BaseWithGen<? extends Base> wtype2) {
+        this.wtype2 = wtype2;
+    }
 }
