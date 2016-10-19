@@ -49,5 +49,6 @@
         </snapshotRepository>
     </distributionManagement>
 
-
+    <build>
+    </build>
 </project>
