@@ -5,6 +5,8 @@ import top.flyfire.common.reflect.MetaInfo;
 import top.flyfire.common.reflect.ReflectUtils;
 import top.flyfire.common.reflect.ReflectiveException;
 import top.flyfire.common.reflect.metainfo.*;
+import top.flyfire.common.reflect.value.Parser;
+import top.flyfire.common.reflect.value.ValueParserHolder;
 
 import java.util.*;
 
@@ -126,7 +128,7 @@ public class WrapperFactory {
     }
 
     private final static Wrapper wrap(final ClassMetaInfo classMetaInfo){
-        Class<?> clzz =  classMetaInfo.getRawType();
+        final Class<?> clzz =  classMetaInfo.getRawType();
         if(List.class.isAssignableFrom(clzz)){
             return new Wrapper<Integer>() {
 
@@ -172,6 +174,31 @@ public class WrapperFactory {
                     return instance;
                 }
             };
+        }else if(ReflectUtils.isJdkPrimitiveType(clzz)){
+            return new Wrapper() {
+
+                Parser valueParser = ValueParserHolder.apply(clzz);
+
+                @Override
+                public Object instance() {
+                    return null;
+                }
+
+                @Override
+                public MetaInfo getMetaInfo(Object o) {
+                    return MetaInfo.NULL;
+                }
+
+                @Override
+                public void set(Object s, Object instance, Object val) {
+
+                }
+
+                @Override
+                public Object rawValue(Object instance) {
+                    return valueParser.parse(instance);
+                }
+            };
         }else {
             return new Wrapper<String>() {
 
@@ -194,7 +221,7 @@ public class WrapperFactory {
                 public void set(String s, Object instance, Object val) {
                     FieldMetaInfo field = classMetaInfo.getField(s);
                     if (field == null) {
-                        throw new ReflectiveException(StringUtils.merge("Field[", s, "] isn't exists..."));
+                        throw new ReflectiveException(StringUtils.merge("Property[", s, "] isn't exists..."));
                     } else {
                         field.invokeSetter(instance, val);
                     }

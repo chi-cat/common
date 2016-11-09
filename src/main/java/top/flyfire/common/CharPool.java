@@ -15,7 +15,7 @@ public interface CharPool {
             H_ = 'h', I_ = 'i', J_ = 'j', K_ = 'k', L_ = 'l', M_ = 'm', N_ = 'n',
             O_ = 'o', P_ = 'p', Q_ = 'q', R_ = 'r', S_ = 's', T_ = 't',
             U_ = 'u', V_ = 'v', W_ = 'w', X_ = 'x', Y_ = 'y', Z_ = 'z',
-            RLINE = '\r', NLINE = '\n', TAB = '\t',
+            RLINE = '\r', NLINE = '\n', TAB = '\t',EMPTY = '\0',
             SPACE = ' ', COMMA = ',', COLON = ':', POINT = '.',
             $ = '$', UDLINE = '_', PLUS = '+', MINUS = '-', MULTIPLE = '*', DIVISION = '/',
             PARENTHESIS_LEFT = '(', PARENTHESIS_RIGHT = ')',

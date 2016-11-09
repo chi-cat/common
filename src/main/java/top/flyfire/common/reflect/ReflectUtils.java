@@ -15,7 +15,11 @@ import java.util.Map;
  */
 public class ReflectUtils {
     public final static boolean isJdkDataType(Class clzz){
-        return ObjectUtils.isNotNull(clzz)&&(clzz.isPrimitive()||Number.class.isAssignableFrom(clzz)||Date.class.isAssignableFrom(clzz)|| Boolean.class.isAssignableFrom(clzz)|| Collection.class.isAssignableFrom(clzz)|| Map.class.isAssignableFrom(clzz));
+        return ObjectUtils.isNotNull(clzz)&&(isJdkPrimitiveType(clzz)|| Collection.class.isAssignableFrom(clzz)|| Map.class.isAssignableFrom(clzz));
+    }
+
+    public final static boolean isJdkPrimitiveType(Class clzz){
+        return ObjectUtils.isNotNull(clzz)&&(clzz.isPrimitive()||Number.class.isAssignableFrom(clzz)||Date.class.isAssignableFrom(clzz)|| Boolean.class.isAssignableFrom(clzz));
     }
 
     public final static boolean isInterface(Class clzz){
