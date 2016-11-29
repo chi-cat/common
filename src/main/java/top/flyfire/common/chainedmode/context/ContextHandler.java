@@ -11,8 +11,13 @@ public abstract class ContextHandler<R,D extends ContextHandler> implements Hand
 
     private Map<String,Boolean> state;
 
-    public boolean validate(String key){
+    public boolean getState(String key){
         return state.get(key);
+    }
+
+    public boolean setState(String key,boolean value){
+        state.put(key,value);
+        return value;
     }
 
 }
