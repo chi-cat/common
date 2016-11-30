@@ -7,7 +7,7 @@ import top.flyfire.common.chainedmode.HandlerChain;
 /**
  * Created by shyy_work on 2016/11/29.
  */
-public abstract class SimpleHandlerChain<R,D> implements HandlerChain<R,D> {
+public class SimpleHandlerChain<R,D> implements HandlerChain<R,D> {
 
     protected Handler<R,D> handler;
 
@@ -20,20 +20,20 @@ public abstract class SimpleHandlerChain<R,D> implements HandlerChain<R,D> {
     public SimpleHandlerChain(int index, Handler<R, D>...handlers) {
         if(index<handlers.length){
             this.handler = handlers[index];
-            this.next = newHandlerChain(index++,handlers);
+            this.next = new SimpleHandlerChain(index++,handlers);
         }
     }
 
     @Override
     public R handling(D data) {
-        if(ObjectUtils.isNotNull(this.handler)){
-            customHandling(data);
+        if(ObjectUtils.isNotNull(handler)){
+            handler.handling(data,next);
         }
         return null;
     }
 
-    public abstract SimpleHandlerChain<R,D> newHandlerChain(int index, Handler<R,D>...handlers);
-
-    public abstract R customHandling(D data);
+    public static <R,D> SimpleHandlerChain<R,D> buildChain(Handler<R,D>...handlers){
+        return new SimpleHandlerChain<>(handlers);
+    }
 
 }
