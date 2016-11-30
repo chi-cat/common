@@ -15,6 +15,8 @@ import java.util.*;
  */
 public class WrapperFactory {
 
+    private ValueParserHolder valueParserHolder = ValueParserHolder.getInstance();
+
     public final static Wrapper<?> wrap(MetaInfo metaInfo){
         if(metaInfo instanceof ClassMetaInfo){
             return wrap((ClassMetaInfo) metaInfo);
@@ -177,7 +179,7 @@ public class WrapperFactory {
         }else if(ReflectUtils.isJdkPrimitiveType(clzz)){
             return new Wrapper() {
 
-                Parser valueParser = ValueParserHolder.apply(clzz);
+//                Parser valueParser = valueParserHolder.apply(clzz);
 
                 @Override
                 public Object instance() {
@@ -196,7 +198,7 @@ public class WrapperFactory {
 
                 @Override
                 public Object rawValue(Object instance) {
-                    return valueParser.parse(instance);
+                    return null;/*valueParser.parse(instance);*/
                 }
             };
         }else {

@@ -14,12 +14,12 @@ public abstract class ContextHandlerChain<R,D extends ContextHandler> extends Si
 
     @Override
     public boolean validate(String key,D data){
-        Boolean result;
-        if(ObjectUtils.isNull(result = data.getState(key))){
-            result = validators.get(key).validate(data,this);
-            data.setState(key,result);
+        Boolean value;
+        if(ObjectUtils.isNull(value = data.getState(key))){
+            value = validators.get(key).validate(data,this);
+            data.setState(key,value);
         }
-        return result;
+        return value;
     }
 
 }

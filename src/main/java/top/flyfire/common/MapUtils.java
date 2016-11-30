@@ -1,6 +1,7 @@
 package top.flyfire.common;
 
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -22,5 +23,14 @@ public class MapUtils {
 
     public static boolean isNotEmpty(Map map){
         return ObjectUtils.isNotNull(map)&&map.size()>0;
+    }
+
+    public static Map megre(Map megreTarget,Map...maps){
+        for(int i = 0;i<maps.length;i++){
+            if(isNotEmpty(maps[i])){
+                megreTarget.putAll(maps[i]);
+            }
+        }
+        return megreTarget;
     }
 }
