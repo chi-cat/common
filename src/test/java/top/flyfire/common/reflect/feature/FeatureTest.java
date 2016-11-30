@@ -17,7 +17,7 @@ public class FeatureTest {
 
     public void common(MetaInfo metaInfo){
         ClassMetaInfo temp = null;
-        Wrapper wrapper = WrapperFactory.wrap(metaInfo);
+        Wrapper wrapper = WrapperFactory.getInstance().wrap(metaInfo);
         Object instance = wrapper.instance();
 //        wrapper.set("gen",instance,new BigDecimal(123));
         metaInfo.toString();
@@ -41,16 +41,16 @@ public class FeatureTest {
     @Test
     public void wtTest(){
         MetaInfo metaInfo = ReflectUtils.unWrap(WType.class);
-        Wrapper wrapper = WrapperFactory.wrap(metaInfo);
+        Wrapper wrapper = WrapperFactory.getInstance().wrap(metaInfo);
         Object instance = wrapper.instance();
 
         MetaInfo fieldMetaInfo = wrapper.getMetaInfo("wtype2");
-        Wrapper fieldWrapper = WrapperFactory.wrap(fieldMetaInfo);
+        Wrapper fieldWrapper = WrapperFactory.getInstance().wrap(fieldMetaInfo);
         MetaInfo subFieldMetaInfo = fieldWrapper.getMetaInfo("gen");
-        Wrapper subFieldWrapper = WrapperFactory.wrap(subFieldMetaInfo);
+        Wrapper subFieldWrapper = WrapperFactory.getInstance().wrap(subFieldMetaInfo);
 
         MetaInfo fieldMetaInfo2 = wrapper.getMetaInfo("wtype");
-        Wrapper fieldWrapper2 = WrapperFactory.wrap(fieldMetaInfo2);
+        Wrapper fieldWrapper2 = WrapperFactory.getInstance().wrap(fieldMetaInfo2);
 
         metaInfo.toString();
     }
