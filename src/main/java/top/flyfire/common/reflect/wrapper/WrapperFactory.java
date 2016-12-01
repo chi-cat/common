@@ -11,6 +11,7 @@ import top.flyfire.common.reflect.metainfo.*;
 import top.flyfire.common.reflect.value.Parser;
 import top.flyfire.common.reflect.value.ValueParserHolder;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -20,15 +21,27 @@ public class WrapperFactory {
 
     private ValueParserHolder valueParserHolder ;
 
+    private Map<Type,Wrapper> wrapperCached;
+
     private WrapperFactory(){
         this(ValueParserHolder.getInstance());
     }
 
     private WrapperFactory(ValueParserHolder valueParserHolder){
         this.valueParserHolder = valueParserHolder;
+        this.wrapperCached = new HashMap<>();
+    }
+
+    private Wrapper cached(Type type,Wrapper cached){
+        wrapperCached.put(type,cached);
+        return cached;
     }
 
     public final Wrapper wrap(MetaInfo metaInfo){
+       return cached(metaInfo,$wrap(metaInfo));
+    }
+
+    private final Wrapper $wrap(MetaInfo metaInfo){
         if(metaInfo instanceof ClassMetaInfo){
             return wrap((ClassMetaInfo) metaInfo);
         }else if(metaInfo instanceof ParameterizedMetaInfo){

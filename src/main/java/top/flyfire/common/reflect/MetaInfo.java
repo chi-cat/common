@@ -37,6 +37,11 @@ public abstract class MetaInfo implements Type {
     }
 
     @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    @Override
     public final String toString() {
         return this.typeName == null?this.typeName=this.buildTypeName():this.typeName;
     }

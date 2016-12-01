@@ -5,6 +5,7 @@ import top.flyfire.common.reflect.MetaInfo;
 import top.flyfire.common.reflect.RawType;
 import top.flyfire.common.reflect.ReflectUtils;
 import top.flyfire.common.reflect.metainfo.ClassMetaInfo;
+import top.flyfire.common.reflect.wrapper.InstanceWrapper;
 import top.flyfire.common.reflect.wrapper.Wrapper;
 import top.flyfire.common.reflect.wrapper.WrapperFactory;
 
@@ -18,7 +19,7 @@ public class FeatureTest {
     public void common(MetaInfo metaInfo){
         ClassMetaInfo temp = null;
         Wrapper wrapper = WrapperFactory.getInstance().wrap(metaInfo);
-        Object instance = wrapper.instance();
+        Object instance = ((InstanceWrapper<String>) wrapper).instance();
 //        wrapper.set("gen",instance,new BigDecimal(123));
         metaInfo.toString();
     }
@@ -42,14 +43,14 @@ public class FeatureTest {
     public void wtTest(){
         MetaInfo metaInfo = ReflectUtils.unWrap(WType.class);
         Wrapper wrapper = WrapperFactory.getInstance().wrap(metaInfo);
-        Object instance = wrapper.instance();
+        Object instance = ((InstanceWrapper) wrapper).instance();
 
-        MetaInfo fieldMetaInfo = wrapper.getMetaInfo("wtype2");
+        MetaInfo fieldMetaInfo = ((InstanceWrapper<String>) wrapper).getMetaInfo("wtype2");
         Wrapper fieldWrapper = WrapperFactory.getInstance().wrap(fieldMetaInfo);
-        MetaInfo subFieldMetaInfo = fieldWrapper.getMetaInfo("gen");
+        MetaInfo subFieldMetaInfo = ((InstanceWrapper<String>) fieldWrapper).getMetaInfo("gen");
         Wrapper subFieldWrapper = WrapperFactory.getInstance().wrap(subFieldMetaInfo);
 
-        MetaInfo fieldMetaInfo2 = wrapper.getMetaInfo("wtype");
+        MetaInfo fieldMetaInfo2 = ((InstanceWrapper<String>) wrapper).getMetaInfo("wtype");
         Wrapper fieldWrapper2 = WrapperFactory.getInstance().wrap(fieldMetaInfo2);
 
         metaInfo.toString();

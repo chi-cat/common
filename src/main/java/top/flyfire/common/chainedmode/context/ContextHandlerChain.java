@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by shyy_work on 2016/11/29.
  */
-public class ContextHandlerChain<R,D extends ContextHandler> extends SimpleHandlerChain<R,D> implements Validator<String,D> {
+public class ContextHandlerChain<R,D extends Context> extends SimpleHandlerChain<R,D> implements Validator<String,D> {
 
     protected Map<String,Validator<D,Validator>> validators;
 
