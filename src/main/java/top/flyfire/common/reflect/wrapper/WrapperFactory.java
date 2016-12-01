@@ -1,6 +1,9 @@
 package top.flyfire.common.reflect.wrapper;
 
 import top.flyfire.common.StringUtils;
+import top.flyfire.common.chainedmode.Handler;
+import top.flyfire.common.chainedmode.HandlerChain;
+import top.flyfire.common.chainedmode.simple.SimpleHandlerChain;
 import top.flyfire.common.reflect.MetaInfo;
 import top.flyfire.common.reflect.ReflectUtils;
 import top.flyfire.common.reflect.ReflectiveException;
@@ -25,7 +28,7 @@ public class WrapperFactory {
         this.valueParserHolder = valueParserHolder;
     }
 
-    public final Wrapper<?> wrap(MetaInfo metaInfo){
+    public final Wrapper wrap(MetaInfo metaInfo){
         if(metaInfo instanceof ClassMetaInfo){
             return wrap((ClassMetaInfo) metaInfo);
         }else if(metaInfo instanceof ParameterizedMetaInfo){
@@ -44,7 +47,7 @@ public class WrapperFactory {
         ClassMetaInfo classMetaInfo = (ClassMetaInfo) parameterizedMetaInfo.getRawType();
         Class<?> clzz = classMetaInfo.getRawType();
         if(List.class.isAssignableFrom(clzz)){
-            return new Wrapper<Integer>() {
+            return new InstanceWrapper<Integer>() {
 
                 @Override
                 public Object instance() {
@@ -67,7 +70,7 @@ public class WrapperFactory {
                 }
             };
         }else if(Map.class.isAssignableFrom(clzz)){
-            return new Wrapper<String>() {
+            return new InstanceWrapper<String>() {
                 @Override
                 public Object instance() {
                     return new HashMap<>();
@@ -114,7 +117,7 @@ public class WrapperFactory {
     }
 
     private final Wrapper wrap(final ArrayMetaInfo arrayMetaInfo){
-        return new Wrapper<Integer>() {
+        return new InstanceWrapper<Integer>() {
             @Override
             public Object instance() {
                 return new ArrayList<>();
@@ -140,7 +143,7 @@ public class WrapperFactory {
     private final Wrapper wrap(final ClassMetaInfo classMetaInfo){
         final Class<?> clzz =  classMetaInfo.getRawType();
         if(List.class.isAssignableFrom(clzz)){
-            return new Wrapper<Integer>() {
+            return new InstanceWrapper<Integer>() {
 
                 @Override
                 public Object instance() {
@@ -163,7 +166,7 @@ public class WrapperFactory {
                 }
             };
         }else if(Map.class.isAssignableFrom(clzz)){
-            return new Wrapper<String>() {
+            return new InstanceWrapper<String>() {
                 @Override
                 public Object instance() {
                     return new HashMap<>();
@@ -190,27 +193,12 @@ public class WrapperFactory {
                 Parser valueParser = valueParserHolder.apply(clzz);
 
                 @Override
-                public Object instance() {
-                    return null;
-                }
-
-                @Override
-                public MetaInfo getMetaInfo(Object o) {
-                    return MetaInfo.NULL;
-                }
-
-                @Override
-                public void set(Object s, Object instance, Object val) {
-
-                }
-
-                @Override
                 public Object rawValue(Object instance) {
                     return valueParser.parse(instance);
                 }
             };
         }else {
-            return new Wrapper<String>() {
+            return new InstanceWrapper<String>() {
 
                 @Override
                 public Object instance() {
