@@ -1,5 +1,6 @@
 package top.flyfire.common.reflect.wrapper;
 
+import top.flyfire.common.Destroy;
 import top.flyfire.common.StringUtils;
 import top.flyfire.common.chainedmode.Handler;
 import top.flyfire.common.chainedmode.HandlerChain;
@@ -19,9 +20,13 @@ import java.util.*;
  */
 public class WrapperFactory {
 
-    private ValueParserHolder valueParserHolder ;
+    private final ValueParserHolder valueParserHolder;
 
-    private Map<Type,Wrapper> wrapperCached;
+    private final Map<Type,Wrapper> wrapperCached;
+
+    private final SimpleHandlerChain<Wrapper,PMetaContext> pmetaHandlerChain;
+
+    private final SimpleHandlerChain<Wrapper,CMetaContext> cmetaHandlerChain;
 
     private WrapperFactory(){
         this(ValueParserHolder.getInstance());
@@ -30,15 +35,268 @@ public class WrapperFactory {
     private WrapperFactory(ValueParserHolder valueParserHolder){
         this.valueParserHolder = valueParserHolder;
         this.wrapperCached = new HashMap<>();
+        this.pmetaHandlerChain = SimpleHandlerChain.buildChain(new Handler<Wrapper, PMetaContext>() {
+            @Override
+            public Wrapper handling(PMetaContext data, HandlerChain<Wrapper, PMetaContext> handlerChain) {
+                if (List.class.isAssignableFrom(data.rawType)) {
+                    final MetaInfo metaInfo = data.parameterizedMetaInfo.getActualTypeArguments()[0];
+                    return new InstanceWrapper<Integer>() {
+
+                        @Override
+                        public Object instance() {
+                            return new ArrayList<>();
+                        }
+
+                        @Override
+                        public MetaInfo getMetaInfo(Integer integer) {
+                            return metaInfo;
+                        }
+
+                        @Override
+                        public void set(Integer s, Object instance, Object val) {
+                            ((List) instance).add(s, val);
+                        }
+
+                        @Override
+                        public Object rawValue(Object instance) {
+                            return instance;
+                        }
+                    };
+                } else {
+                    return handlerChain.handling(data);
+                }
+            }
+        }, new Handler<Wrapper, PMetaContext>() {
+            @Override
+            public Wrapper handling(PMetaContext data, HandlerChain<Wrapper, PMetaContext> handlerChain) {
+                if (Collection.class.isAssignableFrom(data.rawType)) {
+                    final MetaInfo metaInfo = data.parameterizedMetaInfo.getActualTypeArguments()[0];
+                    return new InstanceWrapper<Integer>() {
+
+                        @Override
+                        public Object instance() {
+                            return new HashSet<>();
+                        }
+
+                        @Override
+                        public MetaInfo getMetaInfo(Integer integer) {
+                            return metaInfo;
+                        }
+
+                        @Override
+                        public void set(Integer s, Object instance, Object val) {
+                            ((HashSet) instance).add(val);
+                        }
+
+                        @Override
+                        public Object rawValue(Object instance) {
+                            return instance;
+                        }
+                    };
+                } else {
+                    return handlerChain.handling(data);
+                }
+            }
+        }, new Handler<Wrapper, PMetaContext>() {
+            @Override
+            public Wrapper handling(PMetaContext data, HandlerChain<Wrapper, PMetaContext> handlerChain) {
+                if (Map.class.isAssignableFrom(data.rawType)) {
+                    final MetaInfo metaInfo = data.parameterizedMetaInfo.getActualTypeArguments()[1];
+                    return new InstanceWrapper<String>() {
+                        @Override
+                        public Object instance() {
+                            return new HashMap<>();
+                        }
+
+                        @Override
+                        public MetaInfo getMetaInfo(String s) {
+                            return metaInfo;
+                        }
+
+                        @Override
+                        public void set(String s, Object instance, Object val) {
+                            ((Map) instance).put(s, val);
+                        }
+
+                        @Override
+                        public Object rawValue(Object instance) {
+                            return instance;
+                        }
+                    };
+                } else {
+                    return handlerChain.handling(data);
+                }
+            }
+        }, new Handler<Wrapper, PMetaContext>() {
+            @Override
+            public Wrapper handling(PMetaContext data, HandlerChain<Wrapper, PMetaContext> handlerChain) {
+                return $wrap(data.parameterizedMetaInfo.asClassMetaInfo());
+            }
+        });
+        this.cmetaHandlerChain = SimpleHandlerChain.buildChain(new Handler<Wrapper, CMetaContext>() {
+            @Override
+            public Wrapper handling(CMetaContext data, HandlerChain<Wrapper, CMetaContext> handlerChain) {
+                final Class rawType = data.rawType;
+                if (ReflectUtils.isJdkPrimitiveType(rawType)) {
+                    return new Wrapper() {
+
+                        Parser valueParser = WrapperFactory.this.valueParserHolder.apply(rawType);
+
+                        @Override
+                        public Object rawValue(Object instance) {
+                            return valueParser.parse(instance);
+                        }
+                    };
+                } else {
+                    return handlerChain.handling(data);
+                }
+            }
+        }, new Handler<Wrapper, CMetaContext>() {
+            @Override
+            public Wrapper handling(CMetaContext data, HandlerChain<Wrapper, CMetaContext> handlerChain) {
+                final Class rawType = data.rawType;
+                if (List.class.isAssignableFrom(rawType)) {
+                    return new InstanceWrapper<Integer>() {
+
+                        @Override
+                        public Object instance() {
+                            return new ArrayList<>();
+                        }
+
+                        @Override
+                        public MetaInfo getMetaInfo(Integer integer) {
+                            return ReflectUtils.unWrap(Object.class);
+                        }
+
+                        @Override
+                        public void set(Integer s, Object instance, Object val) {
+                            ((List) instance).add(s, val);
+                        }
+
+                        @Override
+                        public Object rawValue(Object instance) {
+                            return instance;
+                        }
+                    };
+                } else {
+                    return handlerChain.handling(data);
+                }
+            }
+        }, new Handler<Wrapper, CMetaContext>() {
+            @Override
+            public Wrapper handling(CMetaContext data, HandlerChain<Wrapper, CMetaContext> handlerChain) {
+                final Class rawType = data.rawType;
+                if (Collection.class.isAssignableFrom(rawType)) {
+                    return new InstanceWrapper<Integer>() {
+
+                        @Override
+                        public Object instance() {
+                            return new HashSet<>();
+                        }
+
+                        @Override
+                        public MetaInfo getMetaInfo(Integer integer) {
+                            return ReflectUtils.unWrap(Object.class);
+                        }
+
+                        @Override
+                        public void set(Integer s, Object instance, Object val) {
+                            ((HashSet) instance).add(val);
+                        }
+
+                        @Override
+                        public Object rawValue(Object instance) {
+                            return instance;
+                        }
+                    };
+                } else {
+                    return handlerChain.handling(data);
+                }
+            }
+        }, new Handler<Wrapper, CMetaContext>() {
+            @Override
+            public Wrapper handling(CMetaContext data, HandlerChain<Wrapper, CMetaContext> handlerChain) {
+                final Class rawType = data.rawType;
+                if (Map.class.isAssignableFrom(rawType)) {
+                    return new InstanceWrapper<String>() {
+                        @Override
+                        public Object instance() {
+                            return new HashMap<>();
+                        }
+
+                        @Override
+                        public MetaInfo getMetaInfo(String s) {
+                            return ReflectUtils.unWrap(Object.class);
+                        }
+
+                        @Override
+                        public void set(String s, Object instance, Object val) {
+                            ((Map) instance).put(s, val);
+                        }
+
+                        @Override
+                        public Object rawValue(Object instance) {
+                            return instance;
+                        }
+                    };
+                } else {
+                    return handlerChain.handling(data);
+                }
+            }
+        }, new Handler<Wrapper, CMetaContext>() {
+            @Override
+            public Wrapper handling(CMetaContext data, HandlerChain<Wrapper, CMetaContext> handlerChain) {
+                final ClassMetaInfo classMetaInfo = data.classMetaInfo;
+                return new InstanceWrapper<String>() {
+
+                    @Override
+                    public Object instance() {
+                        return classMetaInfo.newInstance();
+                    }
+
+                    @Override
+                    public MetaInfo getMetaInfo(String s) {
+                        FieldMetaInfo field = classMetaInfo.getField(s);
+                        if (field == null) {
+                            return MetaInfo.NULL;
+                        } else {
+                            return field.getType();
+                        }
+                    }
+
+                    @Override
+                    public void set(String s, Object instance, Object val) {
+                        FieldMetaInfo field = classMetaInfo.getField(s);
+                        if (field == null) {
+                            throw new ReflectiveException(StringUtils.merge("Property[", s, "] isn't exists..."));
+                        } else {
+                            field.invokeSetter(instance, val);
+                        }
+                    }
+
+                    @Override
+                    public Object rawValue(Object instance) {
+                        return instance;
+                    }
+                };
+            }
+        });
+    }
+
+    public WrapperFactory(ValueParserHolder valueParserHolder, SimpleHandlerChain<Wrapper, PMetaContext> pmetaHandlerChain, SimpleHandlerChain<Wrapper, CMetaContext> cmetaHandlerChain) {
+        this.valueParserHolder = valueParserHolder;
+        this.pmetaHandlerChain = pmetaHandlerChain;
+        this.cmetaHandlerChain = cmetaHandlerChain;
+        this.wrapperCached = new HashMap<>();
+    }
+
+    public final Wrapper wrap(MetaInfo metaInfo){
+       return cached(metaInfo,$wrap(metaInfo));
     }
 
     private Wrapper cached(Type type,Wrapper cached){
         wrapperCached.put(type,cached);
         return cached;
-    }
-
-    public final Wrapper wrap(MetaInfo metaInfo){
-       return cached(metaInfo,$wrap(metaInfo));
     }
 
     private final Wrapper $wrap(MetaInfo metaInfo){
@@ -56,76 +314,23 @@ public class WrapperFactory {
         throw new ReflectiveException();
     }
 
-    private final Wrapper wrap(final ParameterizedMetaInfo parameterizedMetaInfo){
-        ClassMetaInfo classMetaInfo = (ClassMetaInfo) parameterizedMetaInfo.getRawType();
-        Class<?> clzz = classMetaInfo.getRawType();
-        if(List.class.isAssignableFrom(clzz)){
-            return new InstanceWrapper<Integer>() {
-
-                @Override
-                public Object instance() {
-                    return new ArrayList<>();
-                }
-
-                @Override
-                public MetaInfo getMetaInfo(Integer integer) {
-                    return parameterizedMetaInfo.getActualTypeArguments()[0];
-                }
-
-                @Override
-                public void set(Integer s, Object instance, Object val) {
-                    ((List)instance).add(s,val);
-                }
-
-                @Override
-                public Object rawValue(Object instance) {
-                    return instance;
-                }
-            };
-        }else if(Map.class.isAssignableFrom(clzz)){
-            return new InstanceWrapper<String>() {
-                @Override
-                public Object instance() {
-                    return new HashMap<>();
-                }
-
-                @Override
-                public MetaInfo getMetaInfo(String s) {
-                    return parameterizedMetaInfo.getActualTypeArguments()[1];
-                }
-
-                @Override
-                public void set(String s, Object instance, Object val) {
-                    ((Map)instance).put(s,val);
-                }
-
-                @Override
-                public Object rawValue(Object instance) {
-                    return instance;
-                }
-            };
-        }else{
-            return wrap(parameterizedMetaInfo.asClassMetaInfo());
-        }
-    }
-
     private final Wrapper wrap(WildcardMetaInfo wildcardMetaInfo){
         MetaInfo bound;
         if(!MetaInfo.NULL.equals(bound = wildcardMetaInfo.getLowerBound())){
-            return wrap(bound);
+            return $wrap(bound);
         }else if(MetaInfo.NULL.equals(bound = wildcardMetaInfo.getUpperBound())){
-            return wrap(ReflectUtils.unWrap(Object.class));
+            return $wrap(ReflectUtils.unWrap(Object.class));
         }else{
-            return wrap(bound);
+            return $wrap(bound);
         }
     }
 
     private final Wrapper wrap(VariableMetaInfo variableMetaInfo){
         MetaInfo bound;
         if(MetaInfo.NULL.equals(bound = variableMetaInfo.getBound())){
-            return wrap(ReflectUtils.unWrap(Object.class));
+            return $wrap(ReflectUtils.unWrap(Object.class));
         }else{
-            return wrap(bound);
+            return $wrap(bound);
         }
     }
 
@@ -153,100 +358,61 @@ public class WrapperFactory {
         };
     }
 
-    private final Wrapper wrap(final ClassMetaInfo classMetaInfo){
-        final Class<?> clzz =  classMetaInfo.getRawType();
-        if(List.class.isAssignableFrom(clzz)){
-            return new InstanceWrapper<Integer>() {
-
-                @Override
-                public Object instance() {
-                    return new ArrayList<>();
-                }
-
-                @Override
-                public MetaInfo getMetaInfo(Integer integer) {
-                    return ReflectUtils.unWrap(Object.class);
-                }
-
-                @Override
-                public void set(Integer s, Object instance, Object val) {
-                    ((List)instance).add(s,val);
-                }
-
-                @Override
-                public Object rawValue(Object instance) {
-                    return instance;
-                }
-            };
-        }else if(Map.class.isAssignableFrom(clzz)){
-            return new InstanceWrapper<String>() {
-                @Override
-                public Object instance() {
-                    return new HashMap<>();
-                }
-
-                @Override
-                public MetaInfo getMetaInfo(String s) {
-                    return ReflectUtils.unWrap(Object.class);
-                }
-
-                @Override
-                public void set(String s, Object instance, Object val) {
-                    ((Map)instance).put(s,val);
-                }
-
-                @Override
-                public Object rawValue(Object instance) {
-                    return instance;
-                }
-            };
-        }else if(ReflectUtils.isJdkPrimitiveType(clzz)){
-            return new Wrapper() {
-
-                Parser valueParser = valueParserHolder.apply(clzz);
-
-                @Override
-                public Object rawValue(Object instance) {
-                    return valueParser.parse(instance);
-                }
-            };
-        }else {
-            return new InstanceWrapper<String>() {
-
-                @Override
-                public Object instance() {
-                    return classMetaInfo.newInstance();
-                }
-
-                @Override
-                public MetaInfo getMetaInfo(String s) {
-                    FieldMetaInfo field = classMetaInfo.getField(s);
-                    if (field == null) {
-                        return MetaInfo.NULL;
-                    } else {
-                        return field.getType();
-                    }
-                }
-
-                @Override
-                public void set(String s, Object instance, Object val) {
-                    FieldMetaInfo field = classMetaInfo.getField(s);
-                    if (field == null) {
-                        throw new ReflectiveException(StringUtils.merge("Property[", s, "] isn't exists..."));
-                    } else {
-                        field.invokeSetter(instance, val);
-                    }
-                }
-
-                @Override
-                public Object rawValue(Object instance) {
-                    return instance;
-                }
-            };
+    private final Wrapper wrap(final ParameterizedMetaInfo parameterizedMetaInfo){
+        PMetaContext pMetaContext = new PMetaContext(parameterizedMetaInfo);
+        try {
+            return pmetaHandlerChain.handling(pMetaContext);
+        }finally {
+            pMetaContext.destroy();
         }
     }
 
-    public final static WrapperFactory getInstance(){
+    private final Wrapper wrap(ClassMetaInfo classMetaInfo){
+        CMetaContext cMetaContext = new CMetaContext(classMetaInfo);
+        try {
+            return cmetaHandlerChain.handling(cMetaContext);
+        }finally {
+            cMetaContext.destroy();
+        }
+    }
+
+    private class PMetaContext implements Destroy {
+
+        ParameterizedMetaInfo parameterizedMetaInfo;
+
+        Class rawType;
+
+        public PMetaContext(ParameterizedMetaInfo parameterizedMetaInfo) {
+            this.parameterizedMetaInfo = parameterizedMetaInfo;
+            ClassMetaInfo classMetaInfo = (ClassMetaInfo) parameterizedMetaInfo.getRawType();
+            this.rawType = classMetaInfo.getRawType();
+        }
+
+        @Override
+        public void destroy() {
+            this.parameterizedMetaInfo = null;
+            this.rawType = null;
+        }
+    }
+
+    private class CMetaContext implements Destroy {
+        ClassMetaInfo classMetaInfo;
+
+        Class rawType;
+
+        public CMetaContext(ClassMetaInfo classMetaInfo) {
+            this.classMetaInfo = classMetaInfo;
+            this.rawType = classMetaInfo.getRawType();
+        }
+
+        @Override
+        public void destroy() {
+            this.classMetaInfo = null;
+            this.rawType = null;
+        }
+    }
+
+        public final static WrapperFactory getInstance(){
         return new WrapperFactory();
     }
 

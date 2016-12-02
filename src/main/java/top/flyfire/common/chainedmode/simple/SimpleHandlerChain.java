@@ -20,14 +20,14 @@ public class SimpleHandlerChain<R,D> implements HandlerChain<R,D> {
     public SimpleHandlerChain(int index, Handler<R, D>...handlers) {
         if(index<handlers.length){
             this.handler = handlers[index];
-            this.next = new SimpleHandlerChain(index++,handlers);
+            this.next = new SimpleHandlerChain(++index,handlers);
         }
     }
 
     @Override
     public R handling(D data) {
         if(ObjectUtils.isNotNull(handler)){
-            handler.handling(data,next);
+            return handler.handling(data,next);
         }
         return null;
     }
