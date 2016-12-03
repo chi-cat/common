@@ -1,8 +1,12 @@
 package top.flyfire.common.reflect;
 
 import org.junit.Test;
+import top.flyfire.common.Timed;
 import top.flyfire.common.reflect.metainfo.ClassMetaInfo;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +18,78 @@ import static org.junit.Assert.*;
  * Created by flyfire[dev.lluo@outlook.com] on 2016/6/21.
  */
 public class ReflectUtilsTest {
+
+    @Test
+    public void testRawType(){
+        Type type1 = new RawType<TestSameA<StringBuffer,Date>>(){}.getType();
+        Type type2 = new RawType<TestSameA<StringBuffer,Date>>(){}.getType();
+        System.out.println(type1==type2);
+        System.out.println(type1.equals(type2));
+    }
+
+    @Test
+    public void testVarType() throws Exception{
+        Type type1 = TestSameName.class.getDeclaredField("age").getType();
+        Type type2 = TestSameName.class.getDeclaredField("age").getType();
+    }
+
+    @Test
+    public void testWildType() throws Exception{
+        Type type1 = TestSameName.class.getDeclaredField("name").getGenericType();
+        Type type2 = TestSameName.class.getDeclaredField("name").getGenericType();
+        System.out.println(type1.equals(type2));
+    }
+
+    @Test
+    public void testNew() throws Exception {
+        int i = 1000000;
+        Timed.test(i, new Timed.Case() {
+            @Override
+            public void exec() {
+                try {
+                    People.class.newInstance();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        final Constructor constructor = People.class.getConstructor();
+        Timed.test(i, new Timed.Case() {
+            @Override
+            public void exec() {
+                try {
+                    constructor.newInstance();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
+
+    @Test
+    public void testCast(){
+        final double d = 10.0;
+        Timed.test(1000000, new Timed.Case() {
+            @Override
+            public void exec() {
+                double d1 = d;
+            }
+        });
+        Timed.test(1000000, new Timed.Case() {
+            @Override
+            public void exec() {
+                Integer integer = (int)d;
+            }
+        });
+
+    }
 
     @Test
     public void testUnWrap() throws Exception {

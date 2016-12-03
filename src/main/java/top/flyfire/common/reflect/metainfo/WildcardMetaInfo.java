@@ -18,17 +18,19 @@ public class WildcardMetaInfo extends MetaInfo {
     public WildcardMetaInfo(MetaInfo upperBound, MetaInfo lowerBound) {
         this.upperBound = upperBound;
         this.lowerBound = lowerBound;
+        this.init();
     }
 
     @Override
-    protected String buildTypeName() {
+    protected void init() {
         if(!MetaInfo.NULL.equals(this.lowerBound)){
-            return StringUtils.merge("? super " ,this.lowerBound.getTypeName());
+            typeName = StringUtils.merge("? super " ,this.lowerBound.getTypeName());
         }else if(MetaInfo.NULL.equals(this.upperBound)){
-            return "?";
+            typeName = "?";
         }else{
-            return StringUtils.merge("? extends " ,this.upperBound.getTypeName());
+            typeName = StringUtils.merge("? extends " ,this.upperBound.getTypeName());
         }
+        hash = typeName.hashCode();
     }
 
     @Override

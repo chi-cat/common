@@ -34,7 +34,7 @@ public class ReflectUtils {
         }
     }
 
-    private static final ThreadProxy<Class<?>,ClassMetaInfo> CLASS_META_INFO_THREAD_PROXY = new ThreadProxy<Class<?>,ClassMetaInfo>(){
+    private static final ThreadProxy<Type,MetaInfo> META_INFO_CACHED = new ThreadProxy<Type,MetaInfo>(){
 
         @Override
         protected void init() {
@@ -42,40 +42,40 @@ public class ReflectUtils {
         }
 
         @Override
-        protected ClassMetaInfo proxy(Class<?> key) {
-            return unWrap(key);
+        protected MetaInfo proxy(Type type) {
+            if(type instanceof Class){
+                Class<?> clzz = (Class<?>) type;
+                if(clzz.isArray()){
+                    return new ArrayMetaInfo(unWrap(clzz.getComponentType()));
+                }else {
+                    return unWrap(clzz);
+                }
+            }else if(type instanceof ParameterizedType){
+                ParameterizedType parameterizedType = (ParameterizedType) type;
+                return new ParameterizedMetaInfo(unWrap(parameterizedType.getActualTypeArguments()),unWrap(parameterizedType.getRawType()),unWrap(parameterizedType.getOwnerType()));
+            }else if(type instanceof WildcardType){
+                WildcardType wildcardType = ((WildcardType) type);
+                Type[] upperBounds = wildcardType.getUpperBounds();
+                Type[] lowerBounds = wildcardType.getLowerBounds();
+                return new WildcardMetaInfo(ArrayUtils.isEmpty(upperBounds)?MetaInfo.NULL:unWrap(upperBounds[0]),ArrayUtils.isEmpty(lowerBounds)?MetaInfo.NULL:unWrap(lowerBounds[0]));
+            }else if(type instanceof GenericArrayType){
+                return new ArrayMetaInfo(unWrap(((GenericArrayType) type).getGenericComponentType()));
+            }else if(type instanceof TypeVariable){
+                TypeVariable typeVariable = (TypeVariable) type;
+                Type[] bounds = typeVariable.getBounds();
+                return new VariableMetaInfo(typeVariable.getName(),ArrayUtils.isEmpty(bounds)?MetaInfo.NULL:unWrap(bounds[0]),typeVariable.getGenericDeclaration());
+            }else if(type instanceof MetaInfo){
+                return (MetaInfo) type;
+            }else{
+                throw ExceptionMsgPool.ReflectUtils.unWrap$Type$;
+            }
         }
     };
 
     public final static MetaInfo unWrap(Type type){
         if(ObjectUtils.isNull(type))
             return null;
-        if(type instanceof Class){
-            Class<?> clzz = (Class<?>) type;
-            if(clzz.isArray()){
-                return new ArrayMetaInfo(unWrap(clzz.getComponentType()));
-            }else {
-                return CLASS_META_INFO_THREAD_PROXY.get(clzz);
-            }
-        }else if(type instanceof ParameterizedType){
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            return new ParameterizedMetaInfo(unWrap(parameterizedType.getActualTypeArguments()),unWrap(parameterizedType.getRawType()),unWrap(parameterizedType.getOwnerType()));
-        }else if(type instanceof WildcardType){
-            WildcardType wildcardType = ((WildcardType) type);
-            Type[] upperBounds = wildcardType.getUpperBounds();
-            Type[] lowerBounds = wildcardType.getLowerBounds();
-            return new WildcardMetaInfo(ArrayUtils.isEmpty(upperBounds)?MetaInfo.NULL:unWrap(upperBounds[0]),ArrayUtils.isEmpty(lowerBounds)?MetaInfo.NULL:unWrap(lowerBounds[0]));
-        }else if(type instanceof GenericArrayType){
-            return new ArrayMetaInfo(unWrap(((GenericArrayType) type).getGenericComponentType()));
-        }else if(type instanceof TypeVariable){
-            TypeVariable typeVariable = (TypeVariable) type;
-            Type[] bounds = typeVariable.getBounds();
-            return new VariableMetaInfo(typeVariable.getName(),ArrayUtils.isEmpty(bounds)?MetaInfo.NULL:unWrap(bounds[0]),typeVariable.getGenericDeclaration());
-        }else if(type instanceof MetaInfo){
-            return (MetaInfo) type;
-        }else{
-            throw ExceptionMsgPool.ReflectUtils.unWrap$Type$;
-        }
+        return META_INFO_CACHED.get(type);
     }
 
     public final static MetaInfo[] unWrap(final Type[] types){

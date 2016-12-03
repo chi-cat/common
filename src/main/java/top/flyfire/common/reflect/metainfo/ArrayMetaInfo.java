@@ -16,11 +16,13 @@ public class ArrayMetaInfo extends MetaInfo implements GenericTypeAdapted {
 
     public ArrayMetaInfo(MetaInfo genericComponentType) {
         this.genericComponentType = genericComponentType;
+        this.init();
     }
 
     @Override
-    protected String buildTypeName() {
-        return StringUtils.merge(genericComponentType.toString(),"[]");
+    protected void init() {
+        typeName = StringUtils.merge(genericComponentType.toString(),"[]");
+        hash = typeName.hashCode();
     }
 
     @Override

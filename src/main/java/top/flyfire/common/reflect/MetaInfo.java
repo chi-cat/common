@@ -11,8 +11,9 @@ public abstract class MetaInfo implements Type {
 
     public static final MetaInfo NULL = new MetaInfo() {
         @Override
-        protected String buildTypeName() {
-            return "null";
+        protected void init() {
+            typeName = "null";
+            hash = -1;
         }
 
         @Override
@@ -28,22 +29,24 @@ public abstract class MetaInfo implements Type {
 
     protected String typeName;
 
-    protected abstract String buildTypeName();
+    protected int hash;
+
+    protected abstract void init();
 
     public abstract boolean compatible(Type type);
 
     public final String getTypeName() {
-        return this.toString();
+        return this.typeName;
     }
 
     @Override
     public int hashCode() {
-        return toString().hashCode();
+        return hash;
     }
 
     @Override
     public final String toString() {
-        return this.typeName == null?this.typeName=this.buildTypeName():this.typeName;
+        return this.typeName;
     }
 
 }
