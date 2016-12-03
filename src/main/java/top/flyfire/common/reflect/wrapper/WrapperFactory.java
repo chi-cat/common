@@ -1,11 +1,11 @@
 package top.flyfire.common.reflect.wrapper;
 
 import top.flyfire.common.Destroy;
-import top.flyfire.common.ObjectUtils;
 import top.flyfire.common.StringUtils;
 import top.flyfire.common.chainedmode.Handler;
 import top.flyfire.common.chainedmode.HandlerChain;
 import top.flyfire.common.chainedmode.simple.SimpleHandlerChain;
+import top.flyfire.common.multhread.ThreadProxy;
 import top.flyfire.common.reflect.MetaInfo;
 import top.flyfire.common.reflect.ReflectUtils;
 import top.flyfire.common.reflect.ReflectiveException;
@@ -23,7 +23,23 @@ public class WrapperFactory {
 
     private final ValueParserHolder valueParserHolder;
 
-    private final Map<Type, Wrapper> wrapperCached;
+    private final ThreadProxy<MetaInfo, Wrapper> wrapperCached = new ThreadProxy<MetaInfo, Wrapper>() {
+        @Override
+        protected Wrapper proxy(MetaInfo metaInfo) {
+            if (metaInfo instanceof ClassMetaInfo) {
+                return wrap((ClassMetaInfo) metaInfo);
+            } else if (metaInfo instanceof ParameterizedMetaInfo) {
+                return wrap((ParameterizedMetaInfo) metaInfo);
+            } else if (metaInfo instanceof WildcardMetaInfo) {
+                return wrap((WildcardMetaInfo) metaInfo);
+            } else if (metaInfo instanceof VariableMetaInfo) {
+                return wrap((VariableMetaInfo) metaInfo);
+            } else if (metaInfo instanceof ArrayMetaInfo) {
+                return wrap((ArrayMetaInfo) metaInfo);
+            }
+            throw new ReflectiveException();
+        }
+    };
 
     private final SimpleHandlerChain<Wrapper, PMetaContext> pmetaHandlerChain;
 
@@ -35,7 +51,6 @@ public class WrapperFactory {
 
     private WrapperFactory(ValueParserHolder valueParserHolder) {
         this.valueParserHolder = valueParserHolder;
-        this.wrapperCached = new HashMap<>();
         this.pmetaHandlerChain = SimpleHandlerChain.buildChain(new Handler<Wrapper, PMetaContext>() {
             @Override
             public Wrapper handling(PMetaContext data, HandlerChain<Wrapper, PMetaContext> handlerChain) {
@@ -131,7 +146,7 @@ public class WrapperFactory {
         }, new Handler<Wrapper, PMetaContext>() {
             @Override
             public Wrapper handling(PMetaContext data, HandlerChain<Wrapper, PMetaContext> handlerChain) {
-                return $wrap(data.parameterizedMetaInfo.asClassMetaInfo());
+                return wrapperCached.get(data.parameterizedMetaInfo.asClassMetaInfo());
             }
         });
         this.cmetaHandlerChain = SimpleHandlerChain.buildChain(new Handler<Wrapper, CMetaContext>() {
@@ -271,7 +286,7 @@ public class WrapperFactory {
                         if (field == null) {
                             throw new ReflectiveException(StringUtils.merge("Property[", s, "] isn't exists..."));
                         } else {
-                            field.setValueTo(instance, val);
+                            field.invokeSetter(instance, val);
                         }
                     }
 
@@ -288,52 +303,30 @@ public class WrapperFactory {
         this.valueParserHolder = valueParserHolder;
         this.pmetaHandlerChain = pmetaHandlerChain;
         this.cmetaHandlerChain = cmetaHandlerChain;
-        this.wrapperCached = new HashMap<>();
     }
 
     public final Wrapper wrap(MetaInfo metaInfo) {
-        Wrapper wrapper;
-        return ObjectUtils.isNull(wrapper = wrapperCached.get(metaInfo))?
-                cached(metaInfo, $wrap(metaInfo)):wrapper;
+        return wrapperCached.get(metaInfo);
     }
 
-    private Wrapper cached(Type type, Wrapper cached) {
-        wrapperCached.put(type, cached);
-        return cached;
-    }
-
-    private final Wrapper $wrap(MetaInfo metaInfo) {
-        if (metaInfo instanceof ClassMetaInfo) {
-            return wrap((ClassMetaInfo) metaInfo);
-        } else if (metaInfo instanceof ParameterizedMetaInfo) {
-            return wrap((ParameterizedMetaInfo) metaInfo);
-        } else if (metaInfo instanceof WildcardMetaInfo) {
-            return wrap((WildcardMetaInfo) metaInfo);
-        } else if (metaInfo instanceof VariableMetaInfo) {
-            return wrap((VariableMetaInfo) metaInfo);
-        } else if (metaInfo instanceof ArrayMetaInfo) {
-            return wrap((ArrayMetaInfo) metaInfo);
-        }
-        throw new ReflectiveException();
-    }
 
     private final Wrapper wrap(WildcardMetaInfo wildcardMetaInfo) {
         MetaInfo bound;
         if (!MetaInfo.NULL.equals(bound = wildcardMetaInfo.getLowerBound())) {
-            return $wrap(bound);
+            return wrapperCached.get(bound);
         } else if (MetaInfo.NULL.equals(bound = wildcardMetaInfo.getUpperBound())) {
-            return $wrap(ReflectUtils.unWrap(Object.class));
+            return wrapperCached.get(ReflectUtils.unWrap(Object.class));
         } else {
-            return $wrap(bound);
+            return wrapperCached.get(bound);
         }
     }
 
     private final Wrapper wrap(VariableMetaInfo variableMetaInfo) {
         MetaInfo bound;
         if (MetaInfo.NULL.equals(bound = variableMetaInfo.getBound())) {
-            return $wrap(ReflectUtils.unWrap(Object.class));
+            return wrapperCached.get(ReflectUtils.unWrap(Object.class));
         } else {
-            return $wrap(bound);
+            return wrapperCached.get(bound);
         }
     }
 

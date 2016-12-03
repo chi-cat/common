@@ -20,12 +20,11 @@ public class VariableMetaInfo extends MetaInfo implements GenericTypeAdapted {
         this.typeName = name;
         this.bound = bound;
         this.genericDeclaration = genericDeclaration;
-        this.init();
     }
 
     @Override
-    protected void init() {
-        hash = typeName.hashCode();
+    protected String buildTypeName() {
+        return typeName;
     }
 
     @Override

@@ -19,13 +19,12 @@ public class ParameterizedMetaInfo extends MetaInfo implements GenericTypeAdapte
         this.actualTypeArguments = actualTypeArguments;
         this.rawType = rawType;
         this.ownerType = ownerType;
-        this.init();
     }
 
     @Override
-    protected void init() {
+    protected String buildTypeName() {
         if(this.actualTypeArguments==null||this.actualTypeArguments.length==0){
-            typeName = this.rawType.getTypeName();
+            return this.rawType.getTypeName();
         }else{
             StringBuilder toString = new StringBuilder(this.rawType.getTypeName());
             toString.append('<').append(this.actualTypeArguments[0].getTypeName());
@@ -33,9 +32,8 @@ public class ParameterizedMetaInfo extends MetaInfo implements GenericTypeAdapte
                 toString.append(',').append(this.actualTypeArguments[i].getTypeName());
             }
             toString.append('>');
-            typeName = toString.toString();
+            return toString.toString();
         }
-        hash = typeName.hashCode();
     }
 
     @Override

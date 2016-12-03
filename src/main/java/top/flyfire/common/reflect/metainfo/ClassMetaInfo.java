@@ -26,9 +26,8 @@ public class ClassMetaInfo extends MetaInfo  {
     }
 
     @Override
-    protected void init() {
-        typeName = rawType.getName();
-        hash = typeName.hashCode();
+    protected String buildTypeName() {
+        return rawType.getName();
     }
 
     @Override
@@ -40,7 +39,6 @@ public class ClassMetaInfo extends MetaInfo  {
         this.rawType = rawType;
         this.fieldMetaInfoMap = new HashMap<String, FieldMetaInfo>();
         this.typeParameters = typeParameters;
-        this.init();
     }
 
     public void setFieldMetaInfo(String fieldName,FieldMetaInfo fieldMetaInfo){
