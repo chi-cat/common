@@ -28,6 +28,12 @@ public class Timed {
         System.out.printf("%d小时%d分钟%d秒%d毫秒%n",time/HH,(time%=HH)/mm,(time%=mm)/ss,(time%=ss)/SS);
     }
 
+    public final static  void test(int count, Case cs, int group){
+        for(int exp = 0;exp<count;exp+=group){
+            test(group,cs);
+        }
+    }
+
     public final static void test(final int count, int threadCount, final Case cs){
         Thread[] thread = new Thread[threadCount];
         for(int i = 0;i<threadCount;i++){
