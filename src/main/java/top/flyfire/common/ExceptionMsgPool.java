@@ -8,7 +8,7 @@ import java.util.IllegalFormatFlagsException;
 public interface ExceptionMsgPool {
 
     interface ReflectUtils{
-        IllegalArgumentException unWrap$Type$ = new IllegalArgumentException("ReflectUtils.unWrap only accept Type[Class,ParameterizedType,WildcardType,GenericArrayType,TypeVariable]");
+        IllegalArgumentException unWrap$Type$ = new IllegalArgumentException("ReflectUtils.getMetaInfo only accept Type[Class,ParameterizedType,WildcardType,GenericArrayType,TypeVariable]");
     }
 
     interface StringUtils{

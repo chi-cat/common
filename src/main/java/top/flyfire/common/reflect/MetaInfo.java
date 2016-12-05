@@ -1,5 +1,8 @@
 package top.flyfire.common.reflect;
 
+import top.flyfire.common.reflect.wrapper.Wrapper;
+import top.flyfire.common.reflect.wrapper.WrapperFactory;
+
 import java.lang.reflect.Type;
 
 /**
@@ -7,43 +10,46 @@ import java.lang.reflect.Type;
  */
 public abstract class MetaInfo implements Type {
 
-    public static final MetaInfo[] NONE = new MetaInfo[0];
+    public static final MetaInfo[] NONE ;
 
-    public static final MetaInfo NULL = new MetaInfo() {
-        @Override
-        protected String buildTypeName() {
-            return "null";
-        }
+    public static final MetaInfo NULL;
 
-        @Override
-        public boolean compatible(Type type) {
-            return false;
-        }
+    static {
+        NONE = new MetaInfo[0];
+        NULL = new NullMetaInfo();
+        NULL.initialize();
+    }
 
-        @Override
-        public boolean equals(Object obj) {
-            return obj == this;
-        }
-    };
+    public final void initialize(){
+        typeName = this.buildTypeName();
+        wrapper = WrapperFactory.wrap(this);
+        hash = typeName.hashCode();
+    }
 
     protected String typeName;
 
     protected abstract String buildTypeName();
 
-    public abstract boolean compatible(Type type);
-
     public final String getTypeName() {
-        return this.toString();
+        return typeName;
     }
 
+    protected Wrapper wrapper;
+
+    public final Wrapper getWrapper(){
+        return wrapper;
+    }
+
+    protected int hash;
+
     @Override
-    public int hashCode() {
-        return toString().hashCode();
+    public final int hashCode() {
+        return hash;
     }
 
     @Override
     public final String toString() {
-        return this.typeName == null?this.typeName=this.buildTypeName():this.typeName;
+        return this.typeName;
     }
 
 }

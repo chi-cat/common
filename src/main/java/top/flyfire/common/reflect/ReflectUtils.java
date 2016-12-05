@@ -43,46 +43,53 @@ public class ReflectUtils {
 
         @Override
         protected MetaInfo proxy(Type type) {
+            MetaInfo metaInfo = $proxy(type);
+            metaInfo.initialize();
+            return metaInfo;
+        }
+
+        private MetaInfo $proxy(Type type){
             if(type instanceof Class){
                 Class<?> clzz = (Class<?>) type;
                 if(clzz.isArray()){
-                    return new ArrayMetaInfo(unWrap(clzz.getComponentType()));
+                    return new ArrayMetaInfo(getMetaInfo(clzz.getComponentType()));
                 }else {
-                    return unWrap(clzz);
+                    return getMetaInfo(clzz);
                 }
             }else if(type instanceof ParameterizedType){
                 ParameterizedType parameterizedType = (ParameterizedType) type;
-                return new ParameterizedMetaInfo(unWrap(parameterizedType.getActualTypeArguments()),unWrap(parameterizedType.getRawType()),unWrap(parameterizedType.getOwnerType()));
+                return new ParameterizedMetaInfo(getMetaInfo(parameterizedType.getActualTypeArguments()), getMetaInfo(parameterizedType.getRawType()), getMetaInfo(parameterizedType.getOwnerType()));
             }else if(type instanceof WildcardType){
                 WildcardType wildcardType = ((WildcardType) type);
                 Type[] upperBounds = wildcardType.getUpperBounds();
                 Type[] lowerBounds = wildcardType.getLowerBounds();
-                return new WildcardMetaInfo(ArrayUtils.isEmpty(upperBounds)?MetaInfo.NULL:unWrap(upperBounds[0]),ArrayUtils.isEmpty(lowerBounds)?MetaInfo.NULL:unWrap(lowerBounds[0]));
+                return new WildcardMetaInfo(ArrayUtils.isEmpty(upperBounds)?MetaInfo.NULL: getMetaInfo(upperBounds[0]),ArrayUtils.isEmpty(lowerBounds)?MetaInfo.NULL: getMetaInfo(lowerBounds[0]));
             }else if(type instanceof GenericArrayType){
-                return new ArrayMetaInfo(unWrap(((GenericArrayType) type).getGenericComponentType()));
+                return new ArrayMetaInfo(getMetaInfo(((GenericArrayType) type).getGenericComponentType()));
             }else if(type instanceof TypeVariable){
                 TypeVariable typeVariable = (TypeVariable) type;
                 Type[] bounds = typeVariable.getBounds();
-                return new VariableMetaInfo(typeVariable.getName(),ArrayUtils.isEmpty(bounds)?MetaInfo.NULL:unWrap(bounds[0]),typeVariable.getGenericDeclaration());
+                return new VariableMetaInfo(typeVariable.getName(),ArrayUtils.isEmpty(bounds)?MetaInfo.NULL: getMetaInfo(bounds[0]),typeVariable.getGenericDeclaration());
             }else if(type instanceof MetaInfo){
                 return (MetaInfo) type;
             }else{
                 throw ExceptionMsgPool.ReflectUtils.unWrap$Type$;
             }
         }
+
     };
 
-    public final static MetaInfo unWrap(Type type){
+    public final static MetaInfo getMetaInfo(Type type){
         if(ObjectUtils.isNull(type))
             return null;
         return META_INFO_CACHED.get(type);
     }
 
-    public final static MetaInfo[] unWrap(final Type[] types){
+    public final static MetaInfo[] getMetaInfo(final Type[] types){
         final MetaInfo[] metaInfos = new MetaInfo[types.length];
         LoopUtils.forEach(types, new LoopUtils.ArrItemProxy() {
             public void proxy(int index, Object value, Object[] arr) {
-                metaInfos[index] = unWrap(types[index]);
+                metaInfos[index] = getMetaInfo(types[index]);
             }
         });
         return metaInfos;
@@ -101,8 +108,8 @@ public class ReflectUtils {
         }
     }
 
-    private final static ClassMetaInfo unWrap(Class<?> clzz){
-        ClassMetaInfo classMetaInfo = new ClassMetaInfo(clzz,unWrap(clzz.getTypeParameters()));
+    private final static ClassMetaInfo getMetaInfo(Class<?> clzz){
+        ClassMetaInfo classMetaInfo = new ClassMetaInfo(clzz, getMetaInfo(clzz.getTypeParameters()));
         Field[] fields;
         Method[] methods,result = new Method[2];
         Map<String,Method> methodMap = new HashMap<String,Method>();
@@ -124,13 +131,13 @@ public class ReflectUtils {
                 for(int i = 0;i<fields.length;i++){
                     fieldName = fields[i].getName();
                     if(hasAccess(fieldName,methodMap,result)){
-                        classMetaInfo.setFieldMetaInfo(fieldName,new FieldMetaInfo(fieldName,fields[i],unWrap(fields[i].getGenericType()),result[getter],result[setter]));
+                        classMetaInfo.setFieldMetaInfo(fieldName,new FieldMetaInfo(fieldName,fields[i], getMetaInfo(fields[i].getGenericType()),result[getter],result[setter]));
                     }
                 }
             }
             buildSuper:
             {
-                Type superType = unWrap(clzz.getGenericSuperclass());
+                Type superType = getMetaInfo(clzz.getGenericSuperclass());
                 if(null==superType){
                     break syntax;
                 }else if(superType instanceof ClassMetaInfo){

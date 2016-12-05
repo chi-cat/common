@@ -13,15 +13,15 @@ import java.util.Map;
 /**
  * Created by flyfire[dev.lluo@outlook.com] on 2016/5/30.
  */
-public class ClassMetaInfo extends MetaInfo  {
+public class ClassMetaInfo extends MetaInfo {
 
     private Class<?> rawType;
 
     private MetaInfo[] typeParameters;
 
-    private Map<String,FieldMetaInfo> fieldMetaInfoMap;
+    private Map<String, FieldMetaInfo> fieldMetaInfoMap;
 
-    public Class<?> getRawType(){
+    public Class<?> getRawType() {
         return rawType;
     }
 
@@ -30,28 +30,24 @@ public class ClassMetaInfo extends MetaInfo  {
         return rawType.getName();
     }
 
-    @Override
-    public boolean compatible(Type type) {
-        return false;
-    }
 
-    public ClassMetaInfo(Class<?> rawType,MetaInfo[] typeParameters) {
+    public ClassMetaInfo(Class<?> rawType, MetaInfo[] typeParameters) {
         this.rawType = rawType;
         this.fieldMetaInfoMap = new HashMap<String, FieldMetaInfo>();
         this.typeParameters = typeParameters;
     }
 
-    public void setFieldMetaInfo(String fieldName,FieldMetaInfo fieldMetaInfo){
-        this.fieldMetaInfoMap.put(fieldName,fieldMetaInfo);
+    public void setFieldMetaInfo(String fieldName, FieldMetaInfo fieldMetaInfo) {
+        this.fieldMetaInfoMap.put(fieldName, fieldMetaInfo);
     }
 
-    public void extendSuper(ClassMetaInfo classMetaInfo){
+    public void extendSuper(ClassMetaInfo classMetaInfo) {
         LoopUtils.forEach(classMetaInfo.fieldMetaInfoMap, new EntryProxy$extendSuper$ClassMetaInfo());
     }
 
-    public class EntryProxy$extendSuper$ClassMetaInfo implements LoopUtils.EntryProxy<String,FieldMetaInfo>{
+    public class EntryProxy$extendSuper$ClassMetaInfo implements LoopUtils.EntryProxy<String, FieldMetaInfo> {
         public void proxy(String key, FieldMetaInfo value, Map.Entry<String, FieldMetaInfo> entry) {
-            fieldMetaInfoMap.put(key,value);
+            fieldMetaInfoMap.put(key, value);
         }
     }
 
@@ -67,48 +63,48 @@ public class ClassMetaInfo extends MetaInfo  {
             public void proxy(String key, FieldMetaInfo value, Map.Entry<String, FieldMetaInfo> entry) {
                 Field field = value.getField();
                 MetaInfo fieldType = value.getType();
-                if(fieldType instanceof GenericTypeAdapted)
-                    fieldType = ((GenericTypeAdapted) fieldType).adapt(classMetaInfo.typeParameters,types);
-                fieldMetaInfoMap.put(key, new FieldMetaInfo(key, field,fieldType , value.getGetter(), value.getSetter()));
+                if (fieldType instanceof GenericTypeAdapted)
+                    fieldType = ((GenericTypeAdapted) fieldType).adapt(classMetaInfo.typeParameters, types);
+                fieldMetaInfoMap.put(key, new FieldMetaInfo(key, field, fieldType, value.getGetter(), value.getSetter()));
             }
         });
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(obj == this){
+        if (obj == this) {
             return true;
-        }else if(obj instanceof ClassMetaInfo){
+        } else if (obj instanceof ClassMetaInfo) {
             ClassMetaInfo other = ((ClassMetaInfo) obj);
-            return rawType.equals(other.rawType)&&ReflectUtils.metaInfoArrEquals(typeParameters,other.typeParameters);
-        }else{
+            return rawType.equals(other.rawType) && ReflectUtils.metaInfoArrEquals(typeParameters, other.typeParameters);
+        } else {
             return false;
         }
     }
 
-    public Object newInstance(){
+    public Object newInstance() {
         try {
             return this.rawType.newInstance();
-        }catch (ReflectiveOperationException e){
+        } catch (ReflectiveOperationException e) {
             throw new ReflectiveException(e);
         }
     }
 
-    public boolean constainsField(String fieldName){
-        return null!=getField(fieldName);
+    public boolean constainsField(String fieldName) {
+        return null != getField(fieldName);
     }
 
-    public FieldMetaInfo getField(String fieldName){
+    public FieldMetaInfo getField(String fieldName) {
         return fieldMetaInfoMap.get(fieldName);
     }
 
-    public Enumeration fieldEnum(){
+    public Enumeration fieldEnum() {
         return new Enumeration() {
 
             private Iterator iterator = fieldMetaInfoMap.values().iterator();
 
             public boolean hasMoreElements() {
-                if(iterator.hasNext()){
+                if (iterator.hasNext()) {
                     return true;
                 }
                 iterator = null;
@@ -121,7 +117,7 @@ public class ClassMetaInfo extends MetaInfo  {
         };
     }
 
-    public ClassMetaInfo ssPrototype(){
-        return new ClassMetaInfo(this.rawType,this.typeParameters);
+    public ClassMetaInfo ssPrototype() {
+        return new ClassMetaInfo(this.rawType, this.typeParameters);
     }
 }

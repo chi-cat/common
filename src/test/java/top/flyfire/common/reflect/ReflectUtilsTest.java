@@ -2,17 +2,13 @@ package top.flyfire.common.reflect;
 
 import org.junit.Test;
 import top.flyfire.common.Timed;
-import top.flyfire.common.reflect.metainfo.ClassMetaInfo;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by flyfire[dev.lluo@outlook.com] on 2016/6/21.
@@ -93,11 +89,11 @@ public class ReflectUtilsTest {
 
     @Test
     public void testUnWrap() throws Exception {
-//        MetaInfo metaInfo = ReflectUtils.unWrap(TestSameB.class);
+//        MetaInfo metaInfo = ReflectUtils.getMetaInfo(TestSameB.class);
 //        Object object = ((ClassMetaInfo)metaInfo).newInstance();
 //        ((ClassMetaInfo) metaInfo).getField("date").invokeSetter(object,new Date());
 //        System.out.println(metaInfo);
-        MetaInfo metaInfo = ReflectUtils.unWrap(new RawType<TestSameA<StringBuffer,Date>>(){}.getType());
+        MetaInfo metaInfo = ReflectUtils.getMetaInfo(new RawType<TestSameA<StringBuffer,Date>>(){}.getType());
 //        Object object = ((ClassMetaInfo)metaInfo).newInstance();
 //        ((ClassMetaInfo) metaInfo).getField("name").invokeSetter(object,new Date());
         System.out.println(metaInfo);

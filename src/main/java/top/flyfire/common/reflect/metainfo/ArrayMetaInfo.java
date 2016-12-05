@@ -20,12 +20,7 @@ public class ArrayMetaInfo extends MetaInfo implements GenericTypeAdapted {
 
     @Override
     protected String buildTypeName() {
-        return StringUtils.merge(genericComponentType.toString(),"[]");
-    }
-
-    @Override
-    public boolean compatible(Type type) {
-        return false;
+        return StringUtils.merge(genericComponentType.toString(), "[]");
     }
 
     public MetaInfo getGenericComponentType() {
@@ -34,19 +29,19 @@ public class ArrayMetaInfo extends MetaInfo implements GenericTypeAdapted {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj==this){
+        if (obj == this) {
             return true;
-        }else if(obj instanceof ArrayMetaInfo){
+        } else if (obj instanceof ArrayMetaInfo) {
             ArrayMetaInfo other = ((ArrayMetaInfo) obj);
             return genericComponentType.equals(other.genericComponentType);
-        }else{
+        } else {
             return false;
         }
     }
 
     public MetaInfo adapt(MetaInfo[] variableMetaInfos, MetaInfo[] typeStore) {
-        if(genericComponentType instanceof GenericTypeAdapted){
-            return new ArrayMetaInfo(((GenericTypeAdapted) genericComponentType).adapt(variableMetaInfos,typeStore));
+        if (genericComponentType instanceof GenericTypeAdapted) {
+            return new ArrayMetaInfo(((GenericTypeAdapted) genericComponentType).adapt(variableMetaInfos, typeStore));
         }
         return this;
     }

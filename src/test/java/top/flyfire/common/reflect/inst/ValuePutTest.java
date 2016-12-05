@@ -14,8 +14,8 @@ public class ValuePutTest {
 
     @Test
     public void test(){
-        MetaInfo metaInfo = ReflectUtils.unWrap(new RawType<Map<String,Integer>>(){}.getType());
-        //metaInfo = ReflectUtils.unWrap(new RawType<Animal>(){}.getType());
+        MetaInfo metaInfo = ReflectUtils.getMetaInfo(new RawType<Map<String,Integer>>(){}.getType());
+        //metaInfo = ReflectUtils.getMetaInfo(new RawType<Animal>(){}.getType());
         System.out.println(metaInfo);
     }
 

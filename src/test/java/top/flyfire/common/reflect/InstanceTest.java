@@ -10,7 +10,7 @@ public class InstanceTest {
 
     @Test
     public void test(){
-        MetaInfo metaInfo = ReflectUtils.unWrap(People.class);
+        MetaInfo metaInfo = ReflectUtils.getMetaInfo(People.class);
         Object object = ((ClassMetaInfo)metaInfo).newInstance();
         System.out.println(metaInfo);
     }

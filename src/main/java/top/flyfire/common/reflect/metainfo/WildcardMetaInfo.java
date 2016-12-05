@@ -22,18 +22,13 @@ public class WildcardMetaInfo extends MetaInfo {
 
     @Override
     protected String buildTypeName() {
-        if(!MetaInfo.NULL.equals(this.lowerBound)){
-            return StringUtils.merge("? super " ,this.lowerBound.getTypeName());
-        }else if(MetaInfo.NULL.equals(this.upperBound)){
+        if (!MetaInfo.NULL.equals(this.lowerBound)) {
+            return StringUtils.merge("? super ", this.lowerBound.getTypeName());
+        } else if (MetaInfo.NULL.equals(this.upperBound)) {
             return "?";
-        }else{
-            return StringUtils.merge("? extends " ,this.upperBound.getTypeName());
+        } else {
+            return StringUtils.merge("? extends ", this.upperBound.getTypeName());
         }
-    }
-
-    @Override
-    public boolean compatible(Type type) {
-        return false;
     }
 
     public MetaInfo getUpperBound() {
@@ -46,12 +41,12 @@ public class WildcardMetaInfo extends MetaInfo {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj==this){
+        if (obj == this) {
             return true;
-        }else if(obj instanceof WildcardMetaInfo){
+        } else if (obj instanceof WildcardMetaInfo) {
             WildcardMetaInfo other = ((WildcardMetaInfo) obj);
-            return upperBound.equals(other.upperBound)&&lowerBound.equals(other.lowerBound);
-        }else{
+            return upperBound.equals(other.upperBound) && lowerBound.equals(other.lowerBound);
+        } else {
             return false;
         }
     }
