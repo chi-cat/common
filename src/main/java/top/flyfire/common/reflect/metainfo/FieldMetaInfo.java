@@ -8,6 +8,7 @@ import top.flyfire.common.reflect.ReflectiveException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 
 /**
@@ -50,6 +51,22 @@ public class FieldMetaInfo {
         }
     }
 
+    public Object getValueFrom(Object object){
+        try {
+            return field.get(object);
+        }catch (ReflectiveOperationException e){
+            throw new ReflectiveException(e);
+        }
+    }
+
+    public void setValueTo(Object object,Object objectParameterized){
+        try {
+            field.set(object,objectParameterized);
+        }catch (ReflectiveOperationException e){
+            throw new ReflectiveException(e);
+        }
+    }
+
     public String getFieldName() {
         return fieldName;
     }
@@ -68,6 +85,9 @@ public class FieldMetaInfo {
         this.type = type;
         this.getter = getter;
         this.setter = setter;
+        if(Modifier.isPrivate(field.getModifiers())){
+            field.setAccessible(true);
+        }
     }
 
     @Override

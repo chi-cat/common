@@ -8,7 +8,7 @@ import top.flyfire.common.reflect.metainfo.ClassMetaInfo;
 import top.flyfire.common.reflect.metainfo.FieldMetaInfo;
 import top.flyfire.common.reflect.wrapper.BuildInWrapper;
 import top.flyfire.common.reflect.wrapper.InstanceWrapper;
-import top.flyfire.common.reflect.wrapper.Wrapper;
+import top.flyfire.common.reflect.wrapper.ValueWrapper;
 import top.flyfire.common.reflect.wrapper.WrapperFactory;
 
 /**
@@ -18,7 +18,7 @@ public class FeatureTest {
 
     public void common(MetaInfo metaInfo){
         ClassMetaInfo temp = null;
-        Wrapper wrapper = WrapperFactory.wrap(metaInfo);
+        ValueWrapper wrapper = (ValueWrapper) WrapperFactory.wrap(metaInfo);
         Object instance = ((InstanceWrapper<String>) wrapper).instance();
 //        wrapper.set("gen",instance,new BigDecimal(123));
         metaInfo.toString();
@@ -42,16 +42,16 @@ public class FeatureTest {
     @Test
     public void wtTest(){
         MetaInfo metaInfo = ReflectUtils.getMetaInfo(WType.class);
-        Wrapper wrapper = WrapperFactory.wrap(metaInfo);
+        ValueWrapper wrapper = (ValueWrapper) WrapperFactory.wrap(metaInfo);
         Object instance = ((InstanceWrapper) wrapper).instance();
 
         FieldMetaInfo fieldMetaInfo = ((BuildInWrapper) wrapper).getField("wtype2");
-        Wrapper fieldWrapper = WrapperFactory.wrap(fieldMetaInfo.getType());
+        ValueWrapper fieldWrapper = (ValueWrapper) WrapperFactory.wrap(fieldMetaInfo.getType());
         FieldMetaInfo subFieldMetaInfo = ((BuildInWrapper) fieldWrapper).getField("gen");
-        Wrapper subFieldWrapper = WrapperFactory.wrap(subFieldMetaInfo.getType());
+        ValueWrapper subFieldWrapper = (ValueWrapper) WrapperFactory.wrap(subFieldMetaInfo.getType());
 
         FieldMetaInfo fieldMetaInfo2 = ((BuildInWrapper) wrapper).getField("wtype");
-        Wrapper fieldWrapper2 = WrapperFactory.wrap(fieldMetaInfo2.getType());
+        ValueWrapper fieldWrapper2 = (ValueWrapper) WrapperFactory.wrap(fieldMetaInfo2.getType());
 
         metaInfo.toString();
     }

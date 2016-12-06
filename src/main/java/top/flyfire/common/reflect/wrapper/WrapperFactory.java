@@ -32,10 +32,10 @@ public final class WrapperFactory {
             public Wrapper handling(PMetaContext data, HandlerChain<Wrapper, PMetaContext> handlerChain) {
                 if (List.class.isAssignableFrom(data.rawType)) {
                     final MetaInfo metaInfo = data.parameterizedMetaInfo.getActualTypeArguments()[0];
-                    return new BuildOutWrapper<Integer>() {
+                    return new CollectionWrapper() {
 
                         @Override
-                        public Object instance() {
+                        public Collection instance() {
                             return new ArrayList<>();
                         }
 
@@ -44,15 +44,6 @@ public final class WrapperFactory {
                             return metaInfo;
                         }
 
-                        @Override
-                        public void set(Integer s, Object instance, Object val) {
-                            ((List) instance).add(val);
-                        }
-
-                        @Override
-                        public Object rawValue(Object instance) {
-                            return instance;
-                        }
                     };
                 } else {
                     return handlerChain.handling(data);
@@ -63,10 +54,10 @@ public final class WrapperFactory {
             public Wrapper handling(PMetaContext data, HandlerChain<Wrapper, PMetaContext> handlerChain) {
                 if (Collection.class.isAssignableFrom(data.rawType)) {
                     final MetaInfo metaInfo = data.parameterizedMetaInfo.getActualTypeArguments()[0];
-                    return new BuildOutWrapper<Integer>() {
+                    return new CollectionWrapper() {
 
                         @Override
-                        public Object instance() {
+                        public Collection instance() {
                             return new HashSet<>();
                         }
 
@@ -75,15 +66,6 @@ public final class WrapperFactory {
                             return metaInfo;
                         }
 
-                        @Override
-                        public void set(Integer s, Object instance, Object val) {
-                            ((HashSet) instance).add(val);
-                        }
-
-                        @Override
-                        public Object rawValue(Object instance) {
-                            return instance;
-                        }
                     };
                 } else {
                     return handlerChain.handling(data);
@@ -94,9 +76,9 @@ public final class WrapperFactory {
             public Wrapper handling(PMetaContext data, HandlerChain<Wrapper, PMetaContext> handlerChain) {
                 if (Map.class.isAssignableFrom(data.rawType)) {
                     final MetaInfo metaInfo = data.parameterizedMetaInfo.getActualTypeArguments()[1];
-                    return new BuildOutWrapper<String>() {
+                    return new MapWrapper() {
                         @Override
-                        public Object instance() {
+                        public Map instance() {
                             return new HashMap<>();
                         }
 
@@ -105,15 +87,6 @@ public final class WrapperFactory {
                             return metaInfo;
                         }
 
-                        @Override
-                        public void set(String s, Object instance, Object val) {
-                            ((Map) instance).put(s, val);
-                        }
-
-                        @Override
-                        public Object rawValue(Object instance) {
-                            return instance;
-                        }
                     };
                 } else {
                     return handlerChain.handling(data);
@@ -130,7 +103,7 @@ public final class WrapperFactory {
             public Wrapper handling(CMetaContext data, HandlerChain<Wrapper, CMetaContext> handlerChain) {
                 final Class rawType = data.rawType;
                 if (ReflectUtils.isJdkPrimitiveType(rawType)) {
-                    return new Wrapper() {
+                    return new ValueWrapper() {
 
                         Parser valueParser = valueParserHolder.apply(rawType);
 
@@ -148,10 +121,10 @@ public final class WrapperFactory {
             public Wrapper handling(CMetaContext data, HandlerChain<Wrapper, CMetaContext> handlerChain) {
                 final Class rawType = data.rawType;
                 if (List.class.isAssignableFrom(rawType)) {
-                    return new BuildOutWrapper<Integer>() {
+                    return new CollectionWrapper() {
 
                         @Override
-                        public Object instance() {
+                        public Collection instance() {
                             return new ArrayList<>();
                         }
 
@@ -160,15 +133,6 @@ public final class WrapperFactory {
                             return ReflectUtils.getMetaInfo(Object.class);
                         }
 
-                        @Override
-                        public void set(Integer s, Object instance, Object val) {
-                            ((List) instance).add(val);
-                        }
-
-                        @Override
-                        public Object rawValue(Object instance) {
-                            return instance;
-                        }
                     };
                 } else {
                     return handlerChain.handling(data);
@@ -179,10 +143,10 @@ public final class WrapperFactory {
             public Wrapper handling(CMetaContext data, HandlerChain<Wrapper, CMetaContext> handlerChain) {
                 final Class rawType = data.rawType;
                 if (Collection.class.isAssignableFrom(rawType)) {
-                    return new BuildOutWrapper<Integer>() {
+                    return new CollectionWrapper() {
 
                         @Override
-                        public Object instance() {
+                        public Collection instance() {
                             return new HashSet<>();
                         }
 
@@ -191,15 +155,6 @@ public final class WrapperFactory {
                             return ReflectUtils.getMetaInfo(Object.class);
                         }
 
-                        @Override
-                        public void set(Integer s, Object instance, Object val) {
-                            ((HashSet) instance).add(val);
-                        }
-
-                        @Override
-                        public Object rawValue(Object instance) {
-                            return instance;
-                        }
                     };
                 } else {
                     return handlerChain.handling(data);
@@ -210,9 +165,9 @@ public final class WrapperFactory {
             public Wrapper handling(CMetaContext data, HandlerChain<Wrapper, CMetaContext> handlerChain) {
                 final Class rawType = data.rawType;
                 if (Map.class.isAssignableFrom(rawType)) {
-                    return new BuildOutWrapper<String>() {
+                    return new MapWrapper() {
                         @Override
-                        public Object instance() {
+                        public Map instance() {
                             return new HashMap<>();
                         }
 
@@ -221,15 +176,6 @@ public final class WrapperFactory {
                             return ReflectUtils.getMetaInfo(Object.class);
                         }
 
-                        @Override
-                        public void set(String s, Object instance, Object val) {
-                            ((Map) instance).put(s, val);
-                        }
-
-                        @Override
-                        public Object rawValue(Object instance) {
-                            return instance;
-                        }
                     };
                 } else {
                     return handlerChain.handling(data);
@@ -256,10 +202,6 @@ public final class WrapperFactory {
                         }
                     }
 
-                    @Override
-                    public Object rawValue(Object instance) {
-                        return instance;
-                    }
                 };
             }
         });
@@ -277,7 +219,7 @@ public final class WrapperFactory {
         } else if (metaInfo instanceof ArrayMetaInfo) {
             return wrap((ArrayMetaInfo) metaInfo);
         } else if(metaInfo instanceof NullMetaInfo){
-            return new Wrapper() {
+            return new ValueWrapper() {
                 @Override
                 public Object rawValue(Object instance) {
                     return null;
@@ -309,20 +251,15 @@ public final class WrapperFactory {
     }
 
     private static Wrapper wrap(final ArrayMetaInfo arrayMetaInfo) {
-        return new BuildOutWrapper<Integer>() {
+        return new ArrayWrapper() {
             @Override
-            public Object instance() {
+            public Collection instance() {
                 return new ArrayList<>();
             }
 
             @Override
             public MetaInfo getMetaInfo() {
                 return arrayMetaInfo.getGenericComponentType();
-            }
-
-            @Override
-            public void set(Integer s, Object instance, Object val) {
-                ((List) instance).add(val);
             }
 
             @Override
