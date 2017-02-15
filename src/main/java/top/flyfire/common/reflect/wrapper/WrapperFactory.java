@@ -1,9 +1,8 @@
 package top.flyfire.common.reflect.wrapper;
 
-import top.flyfire.common.Destroy;
+import top.flyfire.common.Destroyable;
 import top.flyfire.common.chainedmode.Handler;
 import top.flyfire.common.chainedmode.HandlerChain;
-import top.flyfire.common.chainedmode.simple.SimpleHandlerChain;
 import top.flyfire.common.reflect.MetaInfo;
 import top.flyfire.common.reflect.NullMetaInfo;
 import top.flyfire.common.reflect.ReflectUtils;
@@ -19,15 +18,15 @@ import java.util.*;
  */
 public final class WrapperFactory {
 
-    private static SimpleHandlerChain<Wrapper, PMetaContext> pmetaHandlerChain;
+    private static HandlerChain<Wrapper, PMetaContext> pmetaHandlerChain;
 
-    private static SimpleHandlerChain<Wrapper, CMetaContext> cmetaHandlerChain;
+    private static HandlerChain<Wrapper, CMetaContext> cmetaHandlerChain;
 
     private static ValueParserHolder valueParserHolder;
 
     static{
         valueParserHolder = ValueParserHolder.getInstance();
-        pmetaHandlerChain = SimpleHandlerChain.buildChain(new Handler<Wrapper, PMetaContext>() {
+        pmetaHandlerChain = HandlerChain.buildChain(new Handler<Wrapper, PMetaContext>() {
             @Override
             public Wrapper handling(PMetaContext data, HandlerChain<Wrapper, PMetaContext> handlerChain) {
                 if (List.class.isAssignableFrom(data.rawType)) {
@@ -98,7 +97,7 @@ public final class WrapperFactory {
                 return wrap(data.parameterizedMetaInfo.asClassMetaInfo());
             }
         });
-        cmetaHandlerChain = SimpleHandlerChain.buildChain(new Handler<Wrapper, CMetaContext>() {
+        cmetaHandlerChain = HandlerChain.buildChain(new Handler<Wrapper, CMetaContext>() {
             @Override
             public Wrapper handling(CMetaContext data, HandlerChain<Wrapper, CMetaContext> handlerChain) {
                 final Class rawType = data.rawType;
@@ -287,7 +286,7 @@ public final class WrapperFactory {
         }
     }
 
-    private static class PMetaContext implements Destroy {
+    private static class PMetaContext implements Destroyable {
 
         ParameterizedMetaInfo parameterizedMetaInfo;
 
@@ -306,7 +305,7 @@ public final class WrapperFactory {
         }
     }
 
-    private static class CMetaContext implements Destroy {
+    private static class CMetaContext implements Destroyable {
         ClassMetaInfo classMetaInfo;
 
         Class rawType;
