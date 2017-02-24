@@ -72,5 +72,7 @@ public final class ValueParserHolder {
 
         DEFAULT_CLASS_VALUE_PARSERS.put(Character.class, new CharParser());
 
+        DEFAULT_CLASS_VALUE_PARSERS.put(String.class, new StringParser());
+
     }
 }

@@ -194,11 +194,7 @@ public final class WrapperFactory {
                     @Override
                     public FieldMetaInfo getField(String s) {
                         FieldMetaInfo field = classMetaInfo.getField(s);
-                        if (field == null) {
-                            throw new ReflectiveException("not exists filed ["+field+"]");
-                        } else {
-                            return field;
-                        }
+                        return field;
                     }
 
                 };

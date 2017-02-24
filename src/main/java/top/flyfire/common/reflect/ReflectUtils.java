@@ -19,7 +19,7 @@ public class ReflectUtils {
     }
 
     public final static boolean isJdkPrimitiveType(Class clzz){
-        return ObjectUtils.isNotNull(clzz)&&(clzz.isPrimitive()||Number.class.isAssignableFrom(clzz)||Date.class.isAssignableFrom(clzz)|| Boolean.class.isAssignableFrom(clzz));
+        return ObjectUtils.isNotNull(clzz)&&(clzz.isPrimitive()||String.class.isAssignableFrom(clzz)||Number.class.isAssignableFrom(clzz)||Date.class.isAssignableFrom(clzz)|| Boolean.class.isAssignableFrom(clzz));
     }
 
     public final static boolean isInterface(Class clzz){

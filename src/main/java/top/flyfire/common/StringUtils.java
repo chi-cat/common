@@ -25,18 +25,19 @@ public class StringUtils implements CharPool {
 
     public static final String NULL = "null";
 
-    public static String merge(String...args){
+    public static String merge(Object...args){
         return megre(args,args.length);
     }
 
-    public static String megre(String[] args,int length){
+    public static String megre(Object[] args,int length){
         int charCount = 0;
+        String[] items = new String[args.length];
         for(int i = 0,len = length;i<len;i++){
-            charCount += args[i]==null?(args[i]=NULL).length():args[i].length();
+            charCount += (items[i]=(args[i]==null?NULL:args[i].toString())).length();
         }
         char[] value = new char[charCount];
         for(int i = 0,charBeign=0,charEnd,len = length;i<len;i++,charBeign+=charEnd){
-            args[i].getChars(0,charEnd = args[i].length(),value,charBeign);
+            items[i].getChars(0,charEnd = items[i].length(),value,charBeign);
         }
         return new String(value);
     }
