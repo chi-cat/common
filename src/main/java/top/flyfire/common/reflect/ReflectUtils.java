@@ -58,7 +58,7 @@ public class ReflectUtils {
                 }
             }else if(type instanceof ParameterizedType){
                 ParameterizedType parameterizedType = (ParameterizedType) type;
-                return new ParameterizedMetaInfo(getMetaInfo(parameterizedType.getActualTypeArguments()), getMetaInfo(parameterizedType.getRawType()), getMetaInfo(parameterizedType.getOwnerType()));
+                return new ParameterizeMetaInfo(getMetaInfo(parameterizedType.getActualTypeArguments()), getMetaInfo(parameterizedType.getRawType()), getMetaInfo(parameterizedType.getOwnerType()));
             }else if(type instanceof WildcardType){
                 WildcardType wildcardType = ((WildcardType) type);
                 Type[] upperBounds = wildcardType.getUpperBounds();
@@ -142,8 +142,8 @@ public class ReflectUtils {
                     break syntax;
                 }else if(superType instanceof ClassMetaInfo){
                     classMetaInfo.extendSuper((ClassMetaInfo)superType);
-                }else if(superType instanceof ParameterizedMetaInfo){
-                    classMetaInfo.extendSuper((ParameterizedMetaInfo)superType);
+                }else if(superType instanceof ParameterizeMetaInfo){
+                    classMetaInfo.extendSuper((ParameterizeMetaInfo)superType);
                 }else{
                     throw new ReflectiveSyntaxException("[A ClassMetaInfo or TypeParameterized is expected in the buidlSuper , but superType is of type "+superType+" .]");
                 }

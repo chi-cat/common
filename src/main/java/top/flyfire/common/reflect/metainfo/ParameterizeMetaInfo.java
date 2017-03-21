@@ -2,12 +2,10 @@ package top.flyfire.common.reflect.metainfo;
 
 import top.flyfire.common.reflect.*;
 
-import java.lang.reflect.Type;
-
 /**
  * Created by flyfire[dev.lluo@outlook.com] on 2016/5/31.
  */
-public class ParameterizedMetaInfo extends MetaInfo implements GenericTypeAdapted {
+public class ParameterizeMetaInfo extends MetaInfo implements GenericTypeAdapted {
 
     private final MetaInfo[] actualTypeArguments;
 
@@ -15,7 +13,7 @@ public class ParameterizedMetaInfo extends MetaInfo implements GenericTypeAdapte
 
     private final MetaInfo ownerType;
 
-    public ParameterizedMetaInfo(MetaInfo[] actualTypeArguments, MetaInfo rawType, MetaInfo ownerType) {
+    public ParameterizeMetaInfo(MetaInfo[] actualTypeArguments, MetaInfo rawType, MetaInfo ownerType) {
         this.actualTypeArguments = actualTypeArguments;
         this.rawType = rawType;
         this.ownerType = ownerType;
@@ -53,8 +51,8 @@ public class ParameterizedMetaInfo extends MetaInfo implements GenericTypeAdapte
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
-        } else if (obj instanceof ParameterizedMetaInfo) {
-            ParameterizedMetaInfo other = ((ParameterizedMetaInfo) obj);
+        } else if (obj instanceof ParameterizeMetaInfo) {
+            ParameterizeMetaInfo other = ((ParameterizeMetaInfo) obj);
             return rawType.equals(other.rawType) && ownerType.equals(other.ownerType) && ReflectUtils.metaInfoArrEquals(actualTypeArguments, other.actualTypeArguments);
         } else {
             return false;
@@ -63,7 +61,7 @@ public class ParameterizedMetaInfo extends MetaInfo implements GenericTypeAdapte
 
     public MetaInfo adapt(MetaInfo[] variableMetaInfos, MetaInfo[] typeStore) {
         MetaInfo[] actualTypeArguments = new MetaInfo[this.actualTypeArguments.length];
-        ParameterizedMetaInfo parameterizedMetaInfo = new ParameterizedMetaInfo(actualTypeArguments, rawType, ownerType);
+        ParameterizeMetaInfo parameterizeMetaInfo = new ParameterizeMetaInfo(actualTypeArguments, rawType, ownerType);
         for (int i = 0; i < actualTypeArguments.length; i++) {
             if (this.actualTypeArguments[i] instanceof GenericTypeAdapted)
                 actualTypeArguments[i] = ((GenericTypeAdapted) this.actualTypeArguments[i]).adapt(variableMetaInfos, typeStore);
@@ -71,7 +69,7 @@ public class ParameterizedMetaInfo extends MetaInfo implements GenericTypeAdapte
                 actualTypeArguments[i] = this.actualTypeArguments[i];
             }
         }
-        return parameterizedMetaInfo;
+        return parameterizeMetaInfo;
     }
 
     public ClassMetaInfo asClassMetaInfo() {

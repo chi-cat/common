@@ -4,7 +4,6 @@ import top.flyfire.common.LoopUtils;
 import top.flyfire.common.reflect.*;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,13 +50,13 @@ public class ClassMetaInfo extends MetaInfo {
         }
     }
 
-    public void extendSuper(ParameterizedMetaInfo parameterizedMetaInfo) {
+    public void extendSuper(ParameterizeMetaInfo parameterizeMetaInfo) {
         MetaInfo metaInfo;
-        if (!((metaInfo = parameterizedMetaInfo.getRawType()) instanceof ClassMetaInfo)) {
-            throw new ReflectiveSyntaxException("[A ClassMetaInfo is expected in the buidlSuper , but superType is of type " + metaInfo + " .]");
+        if (!((metaInfo = parameterizeMetaInfo.getRawType()) instanceof ClassMetaInfo)) {
+            throw new ReflectiveSyntaxException("[A ClassMetaInfo is expected in the buildSuper , but superType is of type " + metaInfo + " .]");
         }
         final ClassMetaInfo classMetaInfo = (ClassMetaInfo) metaInfo;
-        final MetaInfo[] types = parameterizedMetaInfo.getActualTypeArguments();
+        final MetaInfo[] types = parameterizeMetaInfo.getActualTypeArguments();
 
         LoopUtils.forEach(classMetaInfo.fieldMetaInfoMap, new LoopUtils.EntryProxy<String, FieldMetaInfo>() {
             public void proxy(String key, FieldMetaInfo value, Map.Entry<String, FieldMetaInfo> entry) {
