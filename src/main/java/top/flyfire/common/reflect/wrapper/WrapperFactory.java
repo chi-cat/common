@@ -102,7 +102,9 @@ public final class WrapperFactory {
             @Override
             public Wrapper handling(ClassMetaInfoContext data, HandlerChain<Wrapper, ClassMetaInfoContext> handlerChain) {
                 final Class rawType = data.rawType;
-                if (ReflectUtils.isJdkPrimitiveType(rawType)) {
+                if (ReflectUtils.isJdkPrimitiveType(rawType)
+                        ||Date.class.isAssignableFrom(rawType)
+                        ||String.class.isAssignableFrom(rawType)) {
                     return new ValueWrapper() {
 
                         Parser valueParser = valueParserHolder.apply(rawType);
